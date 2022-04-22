@@ -1,4 +1,5 @@
-import { App, Component, Editor, EventRef, KeymapEventHandler, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { cursorTo } from 'readline';
 
 // Remember to rename these classes and interfaces!
 
@@ -70,7 +71,16 @@ export default class MyPlugin extends Plugin {
 			name: 'Open Latex Overlay',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
 				console.log('Active line:' + editor.getCursor('from'));
-				editor.setLine(editor.getCursor('from').line, 'you got hacked');
+				//editor.setLine(editor.getCursor('from').line, 'you got hacked');
+				var position = editor.getCursor('head');
+				var lineNr = position.line;
+				var column = position.ch;
+				var line = editor.getLine(lineNr);
+				var newLine = line.substring(0, column) + 'test' + line.substring(column);
+				
+				//console.log('from: ' + editor.getCursor('from').line + ', ' + editor.getCursor('from').ch + 'to: ' + editor.getCursor('to').line + ', ' + editor.getCursor('to').ch + 'anchor: ' + editor.getCursor('anchor').line + ', ' + editor.getCursor('anchor').ch +'head: ' + editor.getCursor('head').line + ', ' + editor.getCursor('head').ch );
+				editor.setLine(lineNr, newLine);
+				editor.setCursor(position);
 			},
 			hotkeys : [
 				{
