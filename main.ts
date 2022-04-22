@@ -81,6 +81,8 @@ export default class MyPlugin extends Plugin {
 				//console.log('from: ' + editor.getCursor('from').line + ', ' + editor.getCursor('from').ch + 'to: ' + editor.getCursor('to').line + ', ' + editor.getCursor('to').ch + 'anchor: ' + editor.getCursor('anchor').line + ', ' + editor.getCursor('anchor').ch +'head: ' + editor.getCursor('head').line + ', ' + editor.getCursor('head').ch );
 				editor.setLine(lineNr, newLine);
 				editor.setCursor(position);
+
+				const leaf = app.workspace.getRightLeaf(true);
 			},
 			hotkeys : [
 				{
