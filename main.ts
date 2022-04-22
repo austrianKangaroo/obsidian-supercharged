@@ -71,8 +71,15 @@ export default class MyPlugin extends Plugin {
 			editorCallback: (editor: Editor, view : MarkdownView) => {
 				console.log('Active line:' + editor.getCursor('from'));
 				editor.setLine(editor.getCursor('from').line, 'you got hacked');
-				editor.set
-			}
+			},
+			hotkeys : [
+				{
+					key: 'm',
+					modifiers: [
+						'Ctrl'
+					]
+				}
+			]
 		});
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
