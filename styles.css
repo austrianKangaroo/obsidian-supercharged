@@ -1,0 +1,8 @@
+/* Sets all the text color to red! */
+body {
+    color: green;
+}
+
+.ribbon-icon-class {
+    fill: red;
+}
