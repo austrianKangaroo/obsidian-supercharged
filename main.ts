@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Component, Editor, EventRef, KeymapEventHandler, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -65,6 +65,15 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
+		this.addCommand({
+			id: 'open-latex-overlay',
+			name: 'Open Latex Overlay',
+			editorCallback: (editor: Editor, view : MarkdownView) => {
+				console.log('Active line:' + editor.getCursor('from'));
+				editor.setLine(editor.getCursor('from').line, 'you got hacked');
+				editor.set
+			}
+		});
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
