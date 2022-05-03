@@ -1,5 +1,5 @@
 import { waitForDebugger } from 'inspector';
-import { App, Editor, editorEditorField, EditorPosition, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, editorEditorField, EditorPosition, finishRenderMath, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, renderMath, Setting, Workspace, WorkspaceLeaf } from 'obsidian';
 import { cursorTo } from 'readline';
 
 // Remember to rename these classes and interfaces!
@@ -21,12 +21,13 @@ const LatexContextViewType = 'latex-context-view'
 export default class MyPlugin extends Plugin {
 	//settings: MyPluginSettings;
 
-	latexContextView : LatexContextView;
+	//latexContextView : LatexContextView;
+	latexLeaf : WorkspaceLeaf;
 
 	async onload() {
 		//await this.loadSettings();
 
-		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(leaf)));
+		this.registerView(LatexContextViewType, leaf => (/*this.latexContextView = */new LatexContextView(leaf)));
 
 		/*
 		// This creates an icon in the left ribbon.
@@ -82,10 +83,12 @@ export default class MyPlugin extends Plugin {
 			id: 'open-latex-overlay',
 			name: 'Open Latex Overlay',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
+				if(this.latexLeaf) {
+					this.app.workspace.setActiveLeaf(this.latexLeaf);
+				} // only spawn a new view if none is available
 				//console.log('Active line:' + editor.getCursor('from'));
 				//editor.setLine(editor.getCursor('from').line, 'you got hacked');
-				const activeEditor = editor;
-				const cursorPosition = editor.getCursor('head');
+				/*const cursorPosition = editor.getCursor('head');
 				var lineNr = cursorPosition.line;
 				var column = cursorPosition.ch;
 				var line = editor.getLine(lineNr);
@@ -94,10 +97,11 @@ export default class MyPlugin extends Plugin {
 				//console.log('from: ' + editor.getCursor('from').line + ', ' + editor.getCursor('from').ch + 'to: ' + editor.getCursor('to').line + ', ' + editor.getCursor('to').ch + 'anchor: ' + editor.getCursor('anchor').line + ', ' + editor.getCursor('anchor').ch +'head: ' + editor.getCursor('head').line + ', ' + editor.getCursor('head').ch );
 				editor.setLine(lineNr, newLine);
 				editor.setCursor(cursorPosition);
+				*/
 
-				const leaf = this.app.workspace.getRightLeaf(false);
-				this.app.workspace.revealLeaf(leaf)
-				leaf.setViewState({
+				this.latexLeaf = this.app.workspace.getRightLeaf(false);
+				this.app.workspace.revealLeaf(this.latexLeaf)
+				this.latexLeaf.setViewState({
 					type: LatexContextViewType,
 					active: true
 				});
@@ -129,7 +133,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-
+		this.latexLeaf.detach();
 	}
 
 	/*
@@ -145,6 +149,8 @@ export default class MyPlugin extends Plugin {
 
 class LatexContextView extends ItemView {
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
+	editor : Editor;
+
 	getDisplayText(): string {
 		return 'TODO: rename display text';
 	}
@@ -155,31 +161,85 @@ class LatexContextView extends ItemView {
 
 	load() : void {
 		super.load();
-		console.log('LatexContextView loaded');
+		//console.log('LatexContextView loaded');
+
+		const LINE_WIDTH = 2; // number of commands per table line
+		
+		const leaf = this.app.workspace.activeLeaf;
+		if(leaf.view instanceof MarkdownView) {
+			this.editor = leaf.view.editor;
+			insertText(this.editor, 'sample text')
+		} else {
+			console.warn('Unable to determine active Editor');
+		}
+
 		const container = this.containerEl.children[1];
-		const rootEl = document.createElement('div');
-		rootEl.innerHTML = '$\\dots$';
-		rootEl.onClickEvent((event) => {
+		container.empty();
+
+		const rootEl = container.createEl('div'); //document.createElement('div');
+		const table = rootEl.createEl('table');
+
+		const remaining = GREEKS;
+		while(remaining.length > 0) {
+			const row = table.insertRow();
+			remaining.splice(0, LINE_WIDTH).forEach((command, i) => {
+				const cell = row.insertCell();
+				drawButton(command, cell, () => insertText(this.editor, `$${command}$`));
+			});
+			//const row = remaining.splice(0, LINE_WIDTH);
+		}
+		//rootEl.appendChild(renderMath('\\dots', true));
+		//await finishRenderMath();
+		/*rootEl.onClickEvent(() => {
 			const leaf = this.app.workspace.activeLeaf;
 			if(leaf.view instanceof MarkdownView) {
 				const editor = leaf.view.editor;
-				const cursorPosition = editor.getCursor('head');
-				var lineNr = cursorPosition.line;
-				var column = cursorPosition.ch;
-				var line = editor.getLine(lineNr);
-				var newLine = line.substring(0, column) + 'change text from leaf' + line.substring(column);
-				editor.setLine(lineNr, newLine);
+				insertText(editor, 'sample text')
 			} else {
 				console.warn('Unable to determine active Editor');
 			}
-		})
-		
-
-
-		container.empty();
-		container.appendChild(rootEl);
+		})*/
+		//container.empty();
+		//container.appendChild(rootEl);
 	}
+
+	
 }
+
+function drawButton(latexCommand : string, parent : HTMLElement, callback : () => any) : void {
+	const button = parent.appendChild(renderMath(latexCommand, true));
+	button.onClickEvent(event => {
+		if(event.button == 0) {// main (left) mouse button
+			callback();
+		}
+	})
+}
+
+function insertText(editor : Editor, text : string) {
+	const cursorPosition = editor.getCursor('head');
+	const lineNr = cursorPosition.line;
+	const column = cursorPosition.ch;
+	const line = editor.getLine(lineNr);
+	const newLine = line.substring(0, column) + text + line.substring(column);
+	editor.setLine(lineNr, newLine);
+}
+
+type LatexCommandGroup = string[]
+
+const GREEKS : LatexCommandGroup = [
+	'\\alpha',
+	'\\beta',
+	'\\gamma',
+	'\\delta',
+	'\\epsilon'
+]
+
+const MATH_OPERATORS : LatexCommandGroup = [
+	'+',
+	'*',
+	'\\cdot',
+	'\\oplus'
+]
 
 /*
 class SampleModal extends Modal {
