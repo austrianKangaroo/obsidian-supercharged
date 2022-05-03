@@ -17,8 +17,12 @@ const LatexContextViewType = 'latex-context-view'
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
+	latexContextView : LatexContextView;
+
 	async onload() {
 		await this.loadSettings();
+
+		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(leaf)));
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
@@ -88,12 +92,12 @@ export default class MyPlugin extends Plugin {
 				const leaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(leaf)
 				leaf.setViewState({
-					type: 'obsidian-supercharged',
+					type: LatexContextViewType,
 					active: true
 				})
 				leaf.getViewState()
 				//const modal = new Modal(app);
-				this.app.workspace.getActiveViewOfType(LatexContextView);
+				this.app.workspace.getLeavesOfType(LatexContextViewType);
 			},
 			hotkeys : [
 				{
@@ -131,12 +135,24 @@ export default class MyPlugin extends Plugin {
 }
 
 class LatexContextView extends ItemView {
+	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 	getDisplayText(): string {
 		return 'TODO: rename display text';
 	}
 
 	getViewType(): string {
 		return LatexContextViewType;
+	}
+
+	load() : void {
+		super.load();
+		console.log('LatexContextView loaded');
+		const container = this.containerEl.children[1];
+		const rootEl = document.createElement('div');
+		rootEl.innerHTML = 'test';
+
+		container.empty();
+		container.appendChild(rootEl);
 	}
 }
 
