@@ -4,26 +4,31 @@ import { cursorTo } from 'readline';
 
 // Remember to rename these classes and interfaces!
 
+/*
 interface MyPluginSettings {
 	mySetting: string;
 } 
+*/
 
+/*
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
+*/
 
 const LatexContextViewType = 'latex-context-view'
 
 export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+	//settings: MyPluginSettings;
 
 	latexContextView : LatexContextView;
 
 	async onload() {
-		await this.loadSettings();
+		//await this.loadSettings();
 
 		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(leaf)));
 
+		/*
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
@@ -72,7 +77,7 @@ export default class MyPlugin extends Plugin {
 				}
 			}
 		});
-
+		*/
 		this.addCommand({
 			id: 'open-latex-overlay',
 			name: 'Open Latex Overlay',
@@ -107,6 +112,8 @@ export default class MyPlugin extends Plugin {
 				}
 			]
 		});
+
+		/*
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
@@ -118,19 +125,22 @@ export default class MyPlugin extends Plugin {
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		*/
 	}
 
 	onunload() {
 
 	}
 
+	/*
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
-		await this.saveData(this.settings);
+		//await this.saveData(this.settings);
 	}
+	*/
 }
 
 class LatexContextView extends ItemView {
@@ -171,6 +181,7 @@ class LatexContextView extends ItemView {
 	}
 }
 
+/*
 class SampleModal extends Modal {
 	constructor(app: App) {
 		super(app);
@@ -186,7 +197,9 @@ class SampleModal extends Modal {
 		contentEl.empty();
 	}
 }
+*/
 
+/*
 class SampleSettingTab extends PluginSettingTab {
 	plugin: MyPlugin;
 
@@ -215,3 +228,4 @@ class SampleSettingTab extends PluginSettingTab {
 				}));
 	}
 }
+*/
