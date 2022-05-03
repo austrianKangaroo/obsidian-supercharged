@@ -1,5 +1,5 @@
 import { waitForDebugger } from 'inspector';
-import { App, Editor, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, editorEditorField, EditorPosition, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { cursorTo } from 'readline';
 
 // Remember to rename these classes and interfaces!
@@ -79,25 +79,24 @@ export default class MyPlugin extends Plugin {
 			editorCallback: (editor: Editor, view : MarkdownView) => {
 				//console.log('Active line:' + editor.getCursor('from'));
 				//editor.setLine(editor.getCursor('from').line, 'you got hacked');
-				var position = editor.getCursor('head');
-				var lineNr = position.line;
-				var column = position.ch;
+				const activeEditor = editor;
+				const cursorPosition = editor.getCursor('head');
+				var lineNr = cursorPosition.line;
+				var column = cursorPosition.ch;
 				var line = editor.getLine(lineNr);
 				var newLine = line.substring(0, column) + 'test' + line.substring(column);
 				
 				//console.log('from: ' + editor.getCursor('from').line + ', ' + editor.getCursor('from').ch + 'to: ' + editor.getCursor('to').line + ', ' + editor.getCursor('to').ch + 'anchor: ' + editor.getCursor('anchor').line + ', ' + editor.getCursor('anchor').ch +'head: ' + editor.getCursor('head').line + ', ' + editor.getCursor('head').ch );
 				editor.setLine(lineNr, newLine);
-				editor.setCursor(position);
+				editor.setCursor(cursorPosition);
 
 				const leaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(leaf)
 				leaf.setViewState({
 					type: LatexContextViewType,
 					active: true
-				})
-				leaf.getViewState()
-				//const modal = new Modal(app);
-				this.app.workspace.getLeavesOfType(LatexContextViewType);
+				});
+				//this.app.workspace.getLeavesOfType(LatexContextViewType);
 			},
 			hotkeys : [
 				{
@@ -149,7 +148,23 @@ class LatexContextView extends ItemView {
 		console.log('LatexContextView loaded');
 		const container = this.containerEl.children[1];
 		const rootEl = document.createElement('div');
-		rootEl.innerHTML = 'test';
+		rootEl.innerHTML = '$\\dots$';
+		rootEl.onClickEvent((event) => {
+			const leaf = this.app.workspace.activeLeaf;
+			if(leaf.view instanceof MarkdownView) {
+				const editor = leaf.view.editor;
+				const cursorPosition = editor.getCursor('head');
+				var lineNr = cursorPosition.line;
+				var column = cursorPosition.ch;
+				var line = editor.getLine(lineNr);
+				var newLine = line.substring(0, column) + 'change text from leaf' + line.substring(column);
+				editor.setLine(lineNr, newLine);
+			} else {
+				console.warn('Unable to determine active Editor');
+			}
+		})
+		
+
 
 		container.empty();
 		container.appendChild(rootEl);
