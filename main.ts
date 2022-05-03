@@ -1,4 +1,5 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { waitForDebugger } from 'inspector';
+import { App, Editor, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { cursorTo } from 'readline';
 
 // Remember to rename these classes and interfaces!
@@ -9,7 +10,9 @@ interface MyPluginSettings {
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
-} 
+}
+
+const LatexContextViewType = 'latex-context-view'
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -70,7 +73,7 @@ export default class MyPlugin extends Plugin {
 			id: 'open-latex-overlay',
 			name: 'Open Latex Overlay',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
-				console.log('Active line:' + editor.getCursor('from'));
+				//console.log('Active line:' + editor.getCursor('from'));
 				//editor.setLine(editor.getCursor('from').line, 'you got hacked');
 				var position = editor.getCursor('head');
 				var lineNr = position.line;
@@ -82,7 +85,15 @@ export default class MyPlugin extends Plugin {
 				editor.setLine(lineNr, newLine);
 				editor.setCursor(position);
 
-				const leaf = app.workspace.getRightLeaf(true);
+				const leaf = this.app.workspace.getRightLeaf(false);
+				this.app.workspace.revealLeaf(leaf)
+				leaf.setViewState({
+					type: 'obsidian-supercharged',
+					active: true
+				})
+				leaf.getViewState()
+				//const modal = new Modal(app);
+				this.app.workspace.getActiveViewOfType(LatexContextView);
 			},
 			hotkeys : [
 				{
@@ -116,6 +127,16 @@ export default class MyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+}
+
+class LatexContextView extends ItemView {
+	getDisplayText(): string {
+		return 'TODO: rename display text';
+	}
+
+	getViewType(): string {
+		return LatexContextViewType;
 	}
 }
 
