@@ -11,22 +11,16 @@ export default class MyPlugin extends Plugin {
 	latexContextView : LatexContextView;
 	latexLeaf : WorkspaceLeaf;
 
-	async onload() {
+	onload() {
 		//await this.loadSettings();
 
 		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(leaf)));
-
-		this.registerScopeEvent(this.app.scope.register([], 'ArrowUp', (event, context) => {
-			if(this.latexContextView) {
-				this.latexContextView.changeFocus(0, -1);
-			}
-		}));
 
 		this.addCommand({
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
-				if(this.latexLeaf) {
+				if(this.latexContextView && this.latexContextView.visible) {
 					this.app.workspace.setActiveLeaf(this.latexLeaf);
 					return;
 				} // only spawn a new view if none is available
@@ -37,7 +31,6 @@ export default class MyPlugin extends Plugin {
 					type: LatexContextViewType,
 					active: true
 				});
-				//this.app.workspace.getLeavesOfType(LatexContextViewType);
 			},
 			hotkeys : [
 				{
@@ -52,14 +45,17 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.latexLeaf.detach();
+		this.latexContextView = null;
+		this.latexLeaf = null;
+		this.app.workspace.getLeavesOfType(LatexContextViewType).forEach(leaf => leaf.detach());
 	}
 }
 
 class LatexContextView extends ItemView {
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 	editor : Editor;
-	buttons : HTMLElement[][];
+	visible = false;
+	private buttons : HTMLElement[][];
 
 	private focusedRow = -1;
 	private focusedCol = -1;
@@ -82,16 +78,29 @@ class LatexContextView extends ItemView {
 
 	}
 
-	getDisplayText(): string {
+	async onClose() : Promise<void> {
+		console.log('closing');
+		this.visible = false;
+	}
+
+	onunload() : void {
+		console.log('unloading');
+		this.visible = false;
+	}
+
+	getDisplayText() : string {
 		return 'TODO: rename display text';
 	}
 
-	getViewType(): string {
+	getViewType() : string {
 		return LatexContextViewType;
 	}
 
-	load() : void {
-		super.load();
+	onload() : void {
+		//super.load();
+		console.log('loading');
+		this.visible = true;
+		
 		const leaf = this.app.workspace.activeLeaf;
 		if(leaf.view instanceof MarkdownView) {
 			this.editor = leaf.view.editor;
@@ -121,6 +130,10 @@ class LatexContextView extends ItemView {
 			this.buttons.push(buttonRow);
 			//const row = remaining.splice(0, LINE_WIDTH);
 		}
+
+		this.registerScopeEvent(this.app.scope.register([], 'ArrowUp', (event, context) => {
+			this.changeFocus(0, -1);
+		}));
 	}
 }
 
