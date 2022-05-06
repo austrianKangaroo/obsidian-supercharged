@@ -7,17 +7,17 @@ body {
     fill: red;
 }
 
-.obsidian-table td {
+.supercharged-table td {
     color: white;
     background-color: black;
     border: 1px solid white;
     border-radius: 5%;
     padding: 0.3em;
     margin:0.3em;
-    transition: transform 0.5s;
+    transition: all ease 0.5s;
 }
 
-.obsidian-table td::hover {
+.supercharged-table td:hover {
     filter:invert(100%);
-    transform: scale(1.25);
+    transform: scale(1.15);
 }
