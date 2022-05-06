@@ -6,3 +6,11 @@ body {
 .ribbon-icon-class {
     fill: red;
 }
+
+.obsidian-table td {
+    color: red;
+    border: 1px solid;
+    border-radius: 5%;
+    padding: 0.3em;
+    margin:0.3em;
+}
