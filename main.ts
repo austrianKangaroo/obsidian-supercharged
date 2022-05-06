@@ -4,28 +4,33 @@ import { cursorTo } from 'readline';
 
 // Remember to rename these classes and interfaces!
 
-/*
-interface MyPluginSettings {
-	mySetting: string;
-} 
-*/
 
-/*
+
+//gives the User the opportunity to choose their 5 latex codes for their interface
+interface MyPluginSettings {
+	custom_commands : string[];
+} 
+
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	custom_commands : [
+		'command',
+		'command',
+		'command',
+		'command',
+		'command'
+	]
 }
-*/
 
 const LatexContextViewType = 'latex-context-view'
 
 export default class MyPlugin extends Plugin {
-	//settings: MyPluginSettings;
+	settings: MyPluginSettings;
 
 	//latexContextView : LatexContextView;
 	latexLeaf : WorkspaceLeaf;
 
-	async onload() {
-		//await this.loadSettings();
+	async onload() { //this funtion gets excecuted once the plugin gets activated
+		await this.loadSettings();
 
 		this.registerView(LatexContextViewType, leaf => (/*this.latexContextView = */new LatexContextView(leaf)));
 
@@ -117,10 +122,11 @@ export default class MyPlugin extends Plugin {
 			]
 		});
 
-		/*
-		// This adds a settings tab so the user can configure various aspects of the plugin
+		
+		//This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
+/*	
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
@@ -136,15 +142,14 @@ export default class MyPlugin extends Plugin {
 		this.latexLeaf.detach();
 	}
 
-	/*
+	
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
-		//await this.saveData(this.settings);
+		await this.saveData(this.settings);
 	}
-	*/
 }
 
 class LatexContextView extends ItemView {
@@ -152,7 +157,7 @@ class LatexContextView extends ItemView {
 	editor : Editor;
 
 	getDisplayText(): string {
-		return 'TODO: rename display text';
+		return 'Obsidian Supercharged';
 	}
 
 	getViewType(): string {
@@ -162,13 +167,12 @@ class LatexContextView extends ItemView {
 	load() : void {
 		super.load();
 		//console.log('LatexContextView loaded');
-
 		const LINE_WIDTH = 2; // number of commands per table line
 		
 		const leaf = this.app.workspace.activeLeaf;
 		if(leaf.view instanceof MarkdownView) {
 			this.editor = leaf.view.editor;
-			insertText(this.editor, 'sample text')
+			insertText(this.editor, 'here could be your ad!')
 		} else {
 			console.warn('Unable to determine active Editor');
 		}
@@ -176,10 +180,14 @@ class LatexContextView extends ItemView {
 		const container = this.containerEl.children[1];
 		container.empty();
 
-		const rootEl = container.createEl('div'); //document.createElement('div');
+		const rootEl = container.createEl('div',{cls: 'supercharged-table'}
+		); //document.createElement('div');
 		const table = rootEl.createEl('table');
 
+		
 		const remaining = GREEKS;
+
+
 		while(remaining.length > 0) {
 			const row = table.insertRow();
 			remaining.splice(0, LINE_WIDTH).forEach((command, i) => {
@@ -259,7 +267,7 @@ class SampleModal extends Modal {
 }
 */
 
-/*
+
 class SampleSettingTab extends PluginSettingTab {
 	plugin: MyPlugin;
 
@@ -270,22 +278,21 @@ class SampleSettingTab extends PluginSettingTab {
 
 	display(): void {
 		const {containerEl} = this;
-
 		containerEl.empty();
+		containerEl.createEl('h2', {text: 'Define your own latex commands'});
 
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+		for (let i=0; i<this.plugin.settings.custom_commands.length; i++) {
+			new Setting(containerEl)
+				.setName(this.plugin.settings.custom_commands[i])
+				//.setDesc('It\'s a secret')
+				.addText(text => text
+					.setPlaceholder('command')
+					.setValue(this.plugin.settings.custom_commands[i])
+					.onChange(async (value) => {
+						//console.log('Secret: ' + value);
+						this.plugin.settings.custom_commands[i] = value;
+						await this.plugin.saveSettings();
+					}));
+			}
 	}
 }
-*/
