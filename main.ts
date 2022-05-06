@@ -8,11 +8,11 @@ import { cursorTo } from 'readline';
 
 //gives the User the opportunity to choose their 5 latex codes for their interface
 interface MyPluginSettings {
-	CustomCommandGroup : string[];
+	custom_commands : string[];
 } 
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	custom_commands : CustomCommandGroup = [
+	custom_commands : [
 		'command',
 		'command',
 		'command',
@@ -125,7 +125,8 @@ export default class MyPlugin extends Plugin {
 		
 		//This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
-/*
+
+/*	
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
@@ -166,7 +167,6 @@ class LatexContextView extends ItemView {
 	load() : void {
 		super.load();
 		//console.log('LatexContextView loaded');
-
 		const LINE_WIDTH = 2; // number of commands per table line
 		
 		const leaf = this.app.workspace.activeLeaf;
@@ -245,9 +245,8 @@ const GREEKS : LatexCommandGroup = [
 const MATH_OPERATORS : LatexCommandGroup = [
 	'+',
 	'*',
-	'-'
-	//'\\cdot',
-	//'\\oplus'
+	'\\cdot',
+	'\\oplus'
 ]
 
 /*
@@ -280,14 +279,11 @@ class SampleSettingTab extends PluginSettingTab {
 	display(): void {
 		const {containerEl} = this;
 		containerEl.empty();
-
 		containerEl.createEl('h2', {text: 'Define your own latex commands'});
 
-
-//! would be nicer with an array and a loop !
-		for (let i=0; i<custom_commands.length; i++) {
+		for (let i=0; i<this.plugin.settings.custom_commands.length; i++) {
 			new Setting(containerEl)
-				.setName(custom_commands[i])
+				.setName(this.plugin.settings.custom_commands[i])
 				//.setDesc('It\'s a secret')
 				.addText(text => text
 					.setPlaceholder('command')
@@ -298,29 +294,5 @@ class SampleSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					}));
 			}
-		
-		/*new Setting(containerEl)
-		.setName('Custom Value 2')
-		//.setDesc('It\'s a secret')
-		.addText(text => text
-			.setPlaceholder('command')
-			.setValue(this.plugin.settings.command_1)
-			.onChange(async (value) => {
-				//console.log('Secret: ' + value);
-				this.plugin.settings.command_1 = value;
-				await this.plugin.saveSettings();
-			}));
-
-		new Setting(containerEl)
-		.setName('Custom Value 3')
-		//.setDesc('It\'s a secret')
-		.addText(text => text
-			.setPlaceholder('command')
-			.setValue(this.plugin.settings.command_2)
-			.onChange(async (value) => {
-				//console.log('Secret: ' + value);
-				this.plugin.settings.command_2 = value;
-				await this.plugin.saveSettings();
-			}));*/
 	}
 }
