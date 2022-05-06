@@ -6,17 +6,16 @@ import { cursorTo } from 'readline';
 
 
 
-//gives the User the opportunity to choose their 5 latex codes for their interface
+//gives the User the opportunity to choose their 3 latex codes for their interface
 interface MyPluginSettings {
-	command_0: string;
+	custom_commands:[string,string,string,string,string];
+	/*command_0: string;
 	command_1: string;
-	command_2: string;
+	command_2: string;*/
 } 
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	command_0: 'default',
-	command_1: 'default',
-	command_2: 'default'
+	custom_commands : ['command','command','command','command','command']
 }
 
 const LatexContextViewType = 'latex-context-view'
@@ -289,19 +288,21 @@ class SampleSettingTab extends PluginSettingTab {
 
 
 //! would be nicer with an array and a loop !
-		new Setting(containerEl)
-			.setName('Custom Value 1')
-			//.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('command')
-				.setValue(this.plugin.settings.command_0)
-				.onChange(async (value) => {
-					//console.log('Secret: ' + value);
-					this.plugin.settings.command_0 = value;
-					await this.plugin.saveSettings();
-				}));
+		for (let i=0; i<custom_commands.length; i++) {
+			new Setting(containerEl)
+				.setName(custom_commands[i])
+				//.setDesc('It\'s a secret')
+				.addText(text => text
+					.setPlaceholder('command')
+					.setValue(this.plugin.settings.custom_commands[i])
+					.onChange(async (value) => {
+						//console.log('Secret: ' + value);
+						this.plugin.settings.custom_commands[i] = value;
+						await this.plugin.saveSettings();
+					}));
+			}
 		
-		new Setting(containerEl)
+		/*new Setting(containerEl)
 		.setName('Custom Value 2')
 		//.setDesc('It\'s a secret')
 		.addText(text => text
@@ -323,6 +324,6 @@ class SampleSettingTab extends PluginSettingTab {
 				//console.log('Secret: ' + value);
 				this.plugin.settings.command_2 = value;
 				await this.plugin.saveSettings();
-			}));
+			}));*/
 	}
 }
