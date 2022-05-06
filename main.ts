@@ -6,16 +6,19 @@ import { cursorTo } from 'readline';
 
 
 
-//gives the User the opportunity to choose their 3 latex codes for their interface
+//gives the User the opportunity to choose their 5 latex codes for their interface
 interface MyPluginSettings {
-	custom_commands:[string,string,string,string,string];
-	/*command_0: string;
-	command_1: string;
-	command_2: string;*/
+	CustomCommandGroup : string[];
 } 
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	custom_commands : ['command','command','command','command','command']
+	custom_commands : CustomCommandGroup = [
+		'command',
+		'command',
+		'command',
+		'command',
+		'command'
+	]
 }
 
 const LatexContextViewType = 'latex-context-view'
@@ -230,12 +233,6 @@ function insertText(editor : Editor, text : string) {
 }
 
 type LatexCommandGroup = string[]
-
-const Test1 : LatexCommandGroup = [
-	'1',
-	'2',
-	'Three'
-]
 
 const GREEKS : LatexCommandGroup = [
 	'\\alpha',
