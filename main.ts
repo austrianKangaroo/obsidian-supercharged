@@ -283,7 +283,7 @@ class SampleSettingTab extends PluginSettingTab {
 
 		for (let i=0; i<this.plugin.settings.custom_commands.length; i++) {
 			new Setting(containerEl)
-				.setName(this.plugin.settings.custom_commands[i])
+				.setName('Command_'+i)
 				//.setDesc('It\'s a secret')
 				.addText(text => text
 					.setPlaceholder('command')
