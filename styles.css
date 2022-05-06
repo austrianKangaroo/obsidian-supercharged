@@ -8,9 +8,16 @@ body {
 }
 
 .obsidian-table td {
-    color: red;
-    border: 1px solid;
+    color: white;
+    background-color: black;
+    border: 1px solid white;
     border-radius: 5%;
     padding: 0.3em;
     margin:0.3em;
+    transition: transform 0.5s;
+}
+
+.obsidian-table td::hover {
+    filter:invert(100%);
+    transform: scale(1.25);
 }
