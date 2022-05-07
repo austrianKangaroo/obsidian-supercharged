@@ -1,4 +1,4 @@
-import { Editor, ItemView, MarkdownView, Plugin, renderMath, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, ItemView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
