@@ -19,6 +19,11 @@ body {
     transition: all ease 0.5s;
 }
 */
+.supercharged-table button {
+    color: white;
+}
+
+
 .supercharged-table button:hover, .supercharged-table button:focus {
     /*filter:invert(100%);*/
     background-color: white;

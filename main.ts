@@ -26,7 +26,6 @@ export default class MyPlugin extends Plugin {
 
 	latexContextView : LatexContextView;
 	latexLeaf : WorkspaceLeaf;
-
 	activeEditor : Editor;
 
 	async onload() { //this funtion gets excecuted once the plugin gets activated
@@ -38,6 +37,10 @@ export default class MyPlugin extends Plugin {
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
+				if(this.latexLeaf) {
+					app.workspace.setActiveLeaf(this.latexLeaf);
+					return;
+				}
 				// TODO: check if there is a active leaf
 
 				this.activeEditor = editor;
@@ -183,7 +186,7 @@ class LatexContextView extends ItemView {
 		GREEKS.forEach((command, index) => {
 			const button = drawButton(command, rootEl, () => {
 				this.focusButton(index);
-				insertText(this.plugin.activeEditor, `${command}`);
+				insertText(this.plugin.activeEditor, command);
 			});
 			this.buttons.push(button);
 		})
