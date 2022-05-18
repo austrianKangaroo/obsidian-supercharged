@@ -1,4 +1,4 @@
-import { App, Editor, ItemView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, ItemView, loadMathJax, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -43,6 +43,7 @@ export default class MyPlugin extends Plugin {
 				}
 
 				this.activeEditor = editor;
+
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
 				this.latexLeaf.setViewState({
@@ -58,6 +59,15 @@ export default class MyPlugin extends Plugin {
 					]
 				}
 			]
+		});
+
+		//make sure the leaf gets detached when the user changes to a different editor
+		this.app.workspace.on('active-leaf-change', (leaf : WorkspaceLeaf) => { 
+			// note sg: potential event handler memory leak when extension is repeatedly opened and closed
+			console.log('1');
+			if(this.latexLeaf) {
+				this.latexLeaf.detach();
+			}
 		});
 
 		
@@ -77,7 +87,9 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.latexLeaf?.detach();
+		if(this.latexLeaf) {
+			this.latexLeaf.detach();
+		}
 	}
 
 	
@@ -188,7 +200,7 @@ class LatexContextView extends ItemView {
 				insertText(this.plugin.activeEditor, command);
 			});
 			this.buttons.push(button);
-		})
+		});
 		/*while(remaining.length > 0) {
 			const tableRow = table.insertRow();
 			const buttonRow : HTMLButtonElement[] = [];
