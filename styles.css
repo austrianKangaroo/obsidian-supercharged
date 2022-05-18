@@ -23,10 +23,11 @@ body {
     color: white;
 }*/
 
+.supercharged-table button {
+    font-size: large;
+}
 
 .supercharged-table button:hover, .supercharged-table button:focus {
     filter:invert(100%);
-    /*background-color: white;
-    color: black;
-    transform: scale(1.15);*/
+    transform: scale(1.15);
 }

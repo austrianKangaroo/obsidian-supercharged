@@ -183,14 +183,10 @@ class LatexContextView extends ItemView {
 
 		// TODO: only react to keyevent if leaf is focused
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowLeft', () => {
-			if(!this.plugin.activeEditor?.hasFocus) {
-				this.changeFocus(-1);
-			}
+			this.changeFocus(-1);
 		}));
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
-			if(!this.plugin.activeEditor?.hasFocus) {
-				this.changeFocus(1);
-			}
+			this.changeFocus(1);
 		}));
 	}
 
