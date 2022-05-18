@@ -19,7 +19,7 @@ body {
     transition: all ease 0.5s;
 }
 */
-.supercharged-table td button:hover, .supercharged-table td button:focus {
+.supercharged-table button:hover, .supercharged-table button:focus {
     /*filter:invert(100%);*/
     background-color: white;
     color: black;

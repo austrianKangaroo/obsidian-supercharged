@@ -93,10 +93,12 @@ class LatexContextView extends ItemView {
 
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 	visible = false;
-	private buttons : HTMLButtonElement[][];
+	private buttons : HTMLButtonElement[];
 
-	private focusedRow = -1;
+	
 	private focusedCol = -1;
+	//private focusedCol = -1;
+	
 
 	static LINE_WIDTH = 4; // number of commands per table line
 
@@ -106,10 +108,10 @@ class LatexContextView extends ItemView {
 		this.plugin = plugin;
 	}
 
-	changeFocus(dx : number, dy : number) {
-		const newRow = (this.focusedRow + dy + this.buttons.length) % this.buttons.length;
-		const newCol = (this.focusedCol + dx + this.buttons[newRow].length) % this.buttons[newRow].length;
-		this.focusButton(newRow, newCol);
+	changeFocus(dx : number) {
+		//const newRow = (this.focusedRow + dy + this.buttons.length) % this.buttons.length;
+		const newCol = (this.focusedCol + dx + this.buttons.length) % this.buttons.length;
+		this.focusButton(newCol);
 		/*console.log('changing focus');
 		if(0 <= this.focusedRow 
 			&& this.focusedRow < this.buttons.length 
@@ -124,20 +126,18 @@ class LatexContextView extends ItemView {
 		this.buttons[this.focusedRow][this.focusedCol].focus();*/
 	}
 
-	focusButton(rowIndex : number, colIndex : number) {
+	focusButton(colIndex : number) {
 		/*if(0 <= this.focusedRow 
 			&& this.focusedRow < this.buttons.length 
 			&& 0 <= this.focusedCol 
 			&& this.focusedCol < this.buttons[this.focusedRow].length) {
 			this.buttons[this.focusedRow][this.focusedCol].blur(); // remove focus
 		}*/
-		this.buttons.at(this.focusedRow).at(this.focusedCol).blur();
+		this.buttons.at(this.focusedCol).blur();
 
-		if(0 <= rowIndex && rowIndex < this.buttons.length && 0 <= colIndex && colIndex <= this.buttons[rowIndex].length) {
-			this.buttons[rowIndex][colIndex].focus();
-			this.focusedRow = rowIndex;
+		if(0 <= colIndex && colIndex < this.buttons.length) {
+			this.buttons[colIndex].focus();
 			this.focusedCol = colIndex;
-			console.log('focus: ' + this.focusedRow + ', ' + this.focusedCol);
 		}
 	}
 
@@ -156,7 +156,7 @@ class LatexContextView extends ItemView {
 
 	onload() : void {
 		const LINE_WIDTH = 2; // number of commands per table line
-		console.log('latexcontextview loaded');
+		console.log('latexcontextview loaded'); 
 		
 		/*const leaf = this.app.workspace.activeLeaf;
 		if(leaf.view instanceof MarkdownView) {
@@ -174,20 +174,20 @@ class LatexContextView extends ItemView {
 
 		this.buttons = [];
 
-		const container = this.contentEl //this.containerEl.children[1];
-		console.log(this.contentEl);
-		//container.empty();
-		container.createDiv
-		console.log(container);
+		const container = this.contentEl;
 
 		const rootEl = container.createDiv({cls: 'supercharged-table'}); //document.createElement('div');
-		const table = rootEl.createEl('table');
+		//const table = rootEl.createEl('table');
 
 		
-		const remaining = GREEKS;
-
-		var rowIndex = 0;
-		while(remaining.length > 0) {
+		GREEKS.forEach((command, index) => {
+			const button = drawButton(command, rootEl, () => {
+				this.focusButton(index);
+				insertText(this.plugin.activeEditor, `${command}`);
+			});
+			this.buttons.push(button);
+		})
+		/*while(remaining.length > 0) {
 			const tableRow = table.insertRow();
 			const buttonRow : HTMLButtonElement[] = [];
 			remaining.splice(0, LatexContextView.LINE_WIDTH).forEach((command, colIndex) => {
@@ -201,21 +201,15 @@ class LatexContextView extends ItemView {
 			this.buttons.push(buttonRow);
 			//const row = remaining.splice(0, LINE_WIDTH);
 			rowIndex++;
-		}
+		}*/
 
 
 		// TODO: only react to keyevent if leaf is focused
-		this.registerScopeEvent(this.app.scope.register([], 'ArrowUp', () => {
-			this.changeFocus(0, -1);
-		}));
-		this.registerScopeEvent(this.app.scope.register([], 'ArrowDown', () => {
-			this.changeFocus(0, 1);
-		}));
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowLeft', () => {
-			this.changeFocus(-1, 0);
+			this.changeFocus(-1);
 		}));
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
-			this.changeFocus(1, 0);
+			this.changeFocus(1);
 		}));
 	}
 
@@ -238,12 +232,13 @@ function drawButton(latexCommand : string, parent : HTMLElement, callback : () =
 }
 
 function insertText(editor : Editor, text : string) {
-	const cursorPosition = editor.getCursor('head');
+	editor.replaceRange(text, editor.getCursor());
+	/*const cursorPosition = editor.getCursor('head');
 	const lineNr = cursorPosition.line;
 	const column = cursorPosition.ch;
 	const line = editor.getLine(lineNr);
 	const newLine = line.substring(0, column) + text + line.substring(column);
-	editor.setLine(lineNr, newLine);
+	editor.setLine(lineNr, newLine);*/
 }
 
 type LatexCommandGroup = string[]
