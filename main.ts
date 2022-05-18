@@ -2,8 +2,6 @@ import { App, Editor, ItemView, loadMathJax, MarkdownView, Plugin, PluginSetting
 
 // Remember to rename these classes and interfaces!
 
-
-
 //gives the User the opportunity to choose their 5 latex codes for their interface
 interface MyPluginSettings {
 	custom_commands : string[];
@@ -64,10 +62,7 @@ export default class MyPlugin extends Plugin {
 		//make sure the leaf gets detached when the user changes to a different editor
 		this.app.workspace.on('active-leaf-change', (leaf : WorkspaceLeaf) => { 
 			// note sg: potential event handler memory leak when extension is repeatedly opened and closed
-			console.log('1');
-			if(this.latexLeaf) {
-				this.latexLeaf.detach();
-			}
+			this.latexLeaf?.detach();
 		});
 
 		
@@ -87,9 +82,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-		if(this.latexLeaf) {
-			this.latexLeaf.detach();
-		}
+		this.latexLeaf?.detach();
 	}
 
 	
@@ -117,36 +110,16 @@ class LatexContextView extends ItemView {
 	static LINE_WIDTH = 4; // number of commands per table line
 
 	constructor(plugin : MyPlugin, leaf : WorkspaceLeaf) {
-		console.log('new latexcontextview constructed');
 		super(leaf);
 		this.plugin = plugin;
 	}
 
 	changeFocus(dx : number) {
-		//const newRow = (this.focusedRow + dy + this.buttons.length) % this.buttons.length;
 		const newCol = (this.focusedCol + dx + this.buttons.length) % this.buttons.length;
 		this.focusButton(newCol);
-		/*console.log('changing focus');
-		if(0 <= this.focusedRow 
-			&& this.focusedRow < this.buttons.length 
-			&& 0 <= this.focusedCol 
-			&& this.focusedCol < this.buttons[this.focusedRow].length) {
-			this.buttons[this.focusedRow][this.focusedCol].blur(); // remove focus
-		}
-
-		this.focusedRow = (this.focusedRow + this.buttons.length + dy) % this.buttons.length;
-		this.focusedCol = (this.focusedCol + this.buttons[this.focusedRow].length + dx) % this.buttons[this.focusedRow].length;
-
-		this.buttons[this.focusedRow][this.focusedCol].focus();*/
 	}
 
 	focusButton(colIndex : number) {
-		/*if(0 <= this.focusedRow 
-			&& this.focusedRow < this.buttons.length 
-			&& 0 <= this.focusedCol 
-			&& this.focusedCol < this.buttons[this.focusedRow].length) {
-			this.buttons[this.focusedRow][this.focusedCol].blur(); // remove focus
-		}*/
 		this.buttons.at(this.focusedCol).blur();
 
 		if(0 <= colIndex && colIndex < this.buttons.length) {
@@ -170,16 +143,7 @@ class LatexContextView extends ItemView {
 
 	onload() : void {
 		const LINE_WIDTH = 2; // number of commands per table line
-		console.log('latexcontextview loaded'); 
-		
-		/*const leaf = this.app.workspace.activeLeaf;
-		if(leaf.view instanceof MarkdownView) {
-			this.editor = leaf.view.editor;
-			insertText(this.editor, 'here could be your ad!')
-		} else {
-			console.warn('Unable to determine active Editor');
-			return;
-		}*/
+
 		if(!this.plugin.activeEditor) {
 			console.warn('unable to determine active editor');
 			return;
@@ -191,7 +155,6 @@ class LatexContextView extends ItemView {
 		const container = this.contentEl;
 
 		const rootEl = container.createDiv({cls: 'supercharged-table'}); //document.createElement('div');
-		//const table = rootEl.createEl('table');
 
 		
 		GREEKS.forEach((command, index) => {
@@ -220,10 +183,14 @@ class LatexContextView extends ItemView {
 
 		// TODO: only react to keyevent if leaf is focused
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowLeft', () => {
-			this.changeFocus(-1);
+			if(!this.plugin.activeEditor?.hasFocus) {
+				this.changeFocus(-1);
+			}
 		}));
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
-			this.changeFocus(1);
+			if(!this.plugin.activeEditor?.hasFocus) {
+				this.changeFocus(1);
+			}
 		}));
 	}
 
@@ -247,12 +214,6 @@ function drawButton(latexCommand : string, parent : HTMLElement, callback : () =
 
 function insertText(editor : Editor, text : string) {
 	editor.replaceRange(text, editor.getCursor());
-	/*const cursorPosition = editor.getCursor('head');
-	const lineNr = cursorPosition.line;
-	const column = cursorPosition.ch;
-	const line = editor.getLine(lineNr);
-	const newLine = line.substring(0, column) + text + line.substring(column);
-	editor.setLine(lineNr, newLine);*/
 }
 
 type LatexCommandGroup = string[]
