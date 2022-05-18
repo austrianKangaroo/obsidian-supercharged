@@ -41,9 +41,9 @@ export default class MyPlugin extends Plugin {
 					app.workspace.setActiveLeaf(this.latexLeaf);
 					return;
 				}
-				// TODO: check if there is a active leaf
 
 				this.activeEditor = editor;
+				
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
 				this.latexLeaf.setViewState({
