@@ -27,20 +27,18 @@ export default class MyPlugin extends Plugin {
 	latexContextView : LatexContextView;
 	latexLeaf : WorkspaceLeaf;
 
+	activeEditor : Editor;
+
 	async onload() { //this funtion gets excecuted once the plugin gets activated
 		await this.loadSettings();
 
-		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(leaf)));
+		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(this, leaf)));
 
 		this.addCommand({
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
-				if(this.latexContextView && this.latexContextView.visible) {
-					this.app.workspace.setActiveLeaf(this.latexLeaf);
-					return;
-				} // only spawn a new view if none is available
-
+				this.activeEditor = editor;
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
 				this.latexLeaf.setViewState({
@@ -89,38 +87,63 @@ export default class MyPlugin extends Plugin {
 }
 
 class LatexContextView extends ItemView {
+	plugin : MyPlugin;
+
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
-	editor : Editor;
 	visible = false;
-	private buttons : HTMLElement[][];
+	private buttons : HTMLButtonElement[][];
 
 	private focusedRow = -1;
 	private focusedCol = -1;
 
 	static LINE_WIDTH = 4; // number of commands per table line
 
+	constructor(plugin : MyPlugin, leaf : WorkspaceLeaf) {
+		super(leaf);
+		this.plugin = plugin;
+	}
+
 	changeFocus(dx : number, dy : number) {
-		console.log('changing focus');
+		const newRow = (this.focusedRow + dy + this.buttons.length) % this.buttons.length;
+		const newCol = (this.focusedCol + dx + this.buttons[newRow].length) % this.buttons[newRow].length;
+		this.focusButton(newRow, newCol);
+		/*console.log('changing focus');
 		if(0 <= this.focusedRow 
 			&& this.focusedRow < this.buttons.length 
 			&& 0 <= this.focusedCol 
 			&& this.focusedCol < this.buttons[this.focusedRow].length) {
-			this.buttons[this.focusedRow][this.focusedCol].setAttr('color', 'white');
+			this.buttons[this.focusedRow][this.focusedCol].blur(); // remove focus
 		}
 
 		this.focusedRow = (this.focusedRow + this.buttons.length + dy) % this.buttons.length;
 		this.focusedCol = (this.focusedCol + this.buttons[this.focusedRow].length + dx) % this.buttons[this.focusedRow].length;
 
-		this.buttons[this.focusedRow][this.focusedCol].setAttr('color', 'red');
-
+		this.buttons[this.focusedRow][this.focusedCol].focus();*/
 	}
 
-	async onClose() : Promise<void> {
+	focusButton(rowIndex : number, colIndex : number) {
+		/*if(0 <= this.focusedRow 
+			&& this.focusedRow < this.buttons.length 
+			&& 0 <= this.focusedCol 
+			&& this.focusedCol < this.buttons[this.focusedRow].length) {
+			this.buttons[this.focusedRow][this.focusedCol].blur(); // remove focus
+		}*/
+		this.buttons.at(this.focusedRow).at(this.focusedCol).blur();
+
+		if(0 <= rowIndex && rowIndex < this.buttons.length && 0 <= colIndex && colIndex <= this.buttons[rowIndex].length) {
+			this.buttons[rowIndex][colIndex].focus();
+			this.focusedRow = rowIndex;
+			this.focusedCol = colIndex;
+			console.log('focus: ' + this.focusedRow + ', ' + this.focusedCol);
+		}
+	}
+
+	/*async onClose() : Promise<void> {
 		console.log('closing');
 		this.visible = false;
-	}
+	}*/
 
-	getDisplayText(): string {
+	getDisplayText() : string {
 		return 'Obsidian Supercharged';
 	}
 
@@ -128,17 +151,19 @@ class LatexContextView extends ItemView {
 		return LatexContextViewType;
 	}
 
-	load() : void {
-		super.load();
-		//console.log('LatexContextView loaded');
+	onload() : void {
 		const LINE_WIDTH = 2; // number of commands per table line
 		
-		const leaf = this.app.workspace.activeLeaf;
+		/*const leaf = this.app.workspace.activeLeaf;
 		if(leaf.view instanceof MarkdownView) {
 			this.editor = leaf.view.editor;
 			insertText(this.editor, 'here could be your ad!')
 		} else {
 			console.warn('Unable to determine active Editor');
+			return;
+		}*/
+		if(!this.plugin.activeEditor) {
+			console.warn('unable to determine active editor');
 			return;
 		}
 
@@ -155,31 +180,54 @@ class LatexContextView extends ItemView {
 		
 		const remaining = GREEKS;
 
-
+		var rowIndex = 0;
 		while(remaining.length > 0) {
 			const tableRow = table.insertRow();
-			const buttonRow : HTMLElement[] = [];
-			remaining.splice(0, LatexContextView.LINE_WIDTH).forEach((command, i) => {
+			const buttonRow : HTMLButtonElement[] = [];
+			remaining.splice(0, LatexContextView.LINE_WIDTH).forEach((command, colIndex) => {
 				const cell = tableRow.insertCell();
-				buttonRow.push(drawButton(command, cell, () => insertText(this.editor, `$${command}$`)));
+				const button = drawButton(command, cell, () => {
+					this.focusButton(rowIndex, colIndex);
+					insertText(this.plugin.activeEditor, `$${command}$`);
+				});
+				buttonRow.push(button);
 			});
 			this.buttons.push(buttonRow);
 			//const row = remaining.splice(0, LINE_WIDTH);
+			rowIndex++;
 		}
 
-		this.registerScopeEvent(this.app.scope.register([], 'ArrowUp', (event, context) => {
+
+		// TODO: only react to keyevent if leaf is focused
+		this.registerScopeEvent(this.app.scope.register([], 'ArrowUp', () => {
 			this.changeFocus(0, -1);
 		}));
+		this.registerScopeEvent(this.app.scope.register([], 'ArrowDown', () => {
+			this.changeFocus(0, 1);
+		}));
+		this.registerScopeEvent(this.app.scope.register([], 'ArrowLeft', () => {
+			this.changeFocus(-1, 0);
+		}));
+		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
+			this.changeFocus(1, 0);
+		}));
+	}
+
+	onunload(): void {
+		this.plugin.latexLeaf = null;
 	}
 }
 
-function drawButton(latexCommand : string, parent : HTMLElement, callback : () => any) : HTMLElement {
-	const button = parent.appendChild(renderMath(latexCommand, true));
+function drawButton(latexCommand : string, parent : HTMLElement, callback : () => any) : HTMLButtonElement {
+	/*const button = parent.appendChild(renderMath(latexCommand, true));
 	button.onClickEvent(event => {
 		if(event.button == 0) { // main (left) mouse button
 			callback();
 		}
-	});
+	});*/
+	const button = parent.createEl('button');
+	button.appendChild(renderMath(latexCommand, true));
+	button.onClickEvent(callback);
 	return button;
 }
 
