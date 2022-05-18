@@ -7,7 +7,7 @@ import { App, Editor, ItemView, MarkdownView, Plugin, PluginSettingTab, renderMa
 //gives the User the opportunity to choose their 5 latex codes for their interface
 interface MyPluginSettings {
 	custom_commands : string[];
-} 
+}
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	custom_commands : [
@@ -38,6 +38,8 @@ export default class MyPlugin extends Plugin {
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
+				// TODO: check if there is a active leaf
+
 				this.activeEditor = editor;
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
@@ -73,7 +75,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.latexLeaf.detach();
+		this.latexLeaf?.detach();
 	}
 
 	
@@ -99,6 +101,7 @@ class LatexContextView extends ItemView {
 	static LINE_WIDTH = 4; // number of commands per table line
 
 	constructor(plugin : MyPlugin, leaf : WorkspaceLeaf) {
+		console.log('new latexcontextview constructed');
 		super(leaf);
 		this.plugin = plugin;
 	}
@@ -153,6 +156,7 @@ class LatexContextView extends ItemView {
 
 	onload() : void {
 		const LINE_WIDTH = 2; // number of commands per table line
+		console.log('latexcontextview loaded');
 		
 		/*const leaf = this.app.workspace.activeLeaf;
 		if(leaf.view instanceof MarkdownView) {
@@ -170,11 +174,13 @@ class LatexContextView extends ItemView {
 
 		this.buttons = [];
 
-		const container = this.containerEl.children[1];
-		container.empty();
+		const container = this.contentEl //this.containerEl.children[1];
+		console.log(this.contentEl);
+		//container.empty();
+		container.createDiv
+		console.log(container);
 
-		const rootEl = container.createEl('div',{cls: 'supercharged-table'}
-		); //document.createElement('div');
+		const rootEl = container.createDiv({cls: 'supercharged-table'}); //document.createElement('div');
 		const table = rootEl.createEl('table');
 
 		
@@ -188,7 +194,7 @@ class LatexContextView extends ItemView {
 				const cell = tableRow.insertCell();
 				const button = drawButton(command, cell, () => {
 					this.focusButton(rowIndex, colIndex);
-					insertText(this.plugin.activeEditor, `$${command}$`);
+					insertText(this.plugin.activeEditor, `${command}`);
 				});
 				buttonRow.push(button);
 			});
