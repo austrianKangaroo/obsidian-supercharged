@@ -43,7 +43,6 @@ export default class MyPlugin extends Plugin {
 				}
 
 				this.activeEditor = editor;
-				
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
 				this.latexLeaf.setViewState({
