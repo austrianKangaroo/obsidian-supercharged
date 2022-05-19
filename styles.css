@@ -25,9 +25,20 @@ body {
 
 .supercharged-table button {
     font-size: large;
+    padding:1em;
+    margin:0.25em;
+}
+
+.supercharged-table {
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
 }
 
 .supercharged-table button:hover, .supercharged-table button:focus {
     filter:invert(100%);
     transform: scale(1.15);
+    transition: all ease 0.25s;
 }
