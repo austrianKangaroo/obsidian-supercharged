@@ -1,4 +1,4 @@
-import { App, Editor, ItemView, loadMathJax, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -188,6 +188,10 @@ class LatexContextView extends ItemView {
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
 			this.changeFocus(1);
 		}));
+
+		
+		//could this be it?
+		MarkdownPreviewView.renderMarkdown;
 	}
 
 	onunload(): void {
