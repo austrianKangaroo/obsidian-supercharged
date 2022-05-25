@@ -28,6 +28,7 @@ export default class MyPlugin extends Plugin {
 
 	async onload() { //this funtion gets excecuted once the plugin gets activated
 		await this.loadSettings();
+		await loadMathJax();
 
 		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(this, leaf)));
 
@@ -109,7 +110,7 @@ class LatexContextView extends ItemView {
 	//private focusedCol = -1;
 	
 
-	static LINE_WIDTH = 4; // number of commands per table line
+	//static LINE_WIDTH = 4; // number of commands per table line
 
 	constructor(plugin : MyPlugin, leaf : WorkspaceLeaf) {
 		super(leaf);
