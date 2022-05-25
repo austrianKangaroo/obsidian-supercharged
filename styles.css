@@ -12,6 +12,10 @@ body {
     margin:0.25em;
 }
 
+.supercharged-table mjx-container.MathJax{
+    margin:0px;
+}
+
 .supercharged-table {
     display: flex;
     align-items: stretch;
