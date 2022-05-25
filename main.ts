@@ -161,7 +161,23 @@ class LatexContextView extends ItemView {
 
 		const rootEl = container.createDiv({cls: 'supercharged-table'}); //document.createElement('div');
 
-		
+		const commandGroups = [{
+			name : 'custom commands',
+			commands : this.plugin.settings.custom_commands
+		}].concat(COMMAND_GROUPS);
+
+		commandGroups.forEach((group, i) => {
+			const header = rootEl.createEl('h2');
+			header.textContent = group.name;
+			group.commands.forEach((command, index) => {
+				drawButton(command, rootEl, () => {
+					//this.focusButton(index);
+					insertText(this.plugin.activeEditor, command);
+				});
+				//this.buttons.push(button);
+			})
+		})
+		/*
 		MATH_OPERATORS.forEach((command, index) => {
 			drawButton(command, rootEl, () => {
 				//this.focusButton(index);
@@ -169,7 +185,7 @@ class LatexContextView extends ItemView {
 			});
 			//this.buttons.push(button);
 		});
-
+*/
 
 		// TODO: only react to keyevent if leaf is focused
 		/*
@@ -206,9 +222,14 @@ function insertText(editor : Editor, text : string) {
 	editor.replaceRange(text, editor.getCursor());
 }
 
-type LatexCommandGroup = string[]
+type LatexCommandGroup = {
+	name : string,
+	commands : string[]
+}
 
-const GREEKS : LatexCommandGroup = [
+const GREEKS : LatexCommandGroup = {
+	name : 'Greek lowercase letters',
+	commands : [
 	'\\alpha',
 	'\\beta',
 	'\\gamma',
@@ -241,20 +262,25 @@ const GREEKS : LatexCommandGroup = [
 	'\\psi',
 	'\\omega'
 ]
+}
 
-const SET_SYMBOLS : LatexCommandGroup = [
+const SET_SYMBOLS : LatexCommandGroup = {
+	name : 'set theory',
+	commands : [
 	'\\in',
 	'\\notin',
 	'\\ni',
-	'\\notni',
 	'\\subseteq',
 	'\\supseteq',
 	'\\cup',
 	'\\cap',
 	'\\times'
 ]
+}
 
-const LOGIC_SYMBOLS : LatexCommandGroup = [
+const LOGIC_SYMBOLS : LatexCommandGroup = {
+	name : 'logic symbols',
+	commands : [
 	'\\exists',
 	'\\exists!',
 	'\\nexists',
@@ -268,14 +294,25 @@ const LOGIC_SYMBOLS : LatexCommandGroup = [
 	'\\top',
 	'\\bot'
 ]
+}
 
-const MATH_OPERATORS : LatexCommandGroup = [
+const MATH_OPERATORS : LatexCommandGroup = {
+	name : 'math operators',
+	commands : [
 	'+',
 	'*',
 	'\\cdot',
 	'\\oplus', 
 	'\\sum_{i=1}^n a_i',
 	'\\int_a^b f(x)dx'
+]
+}
+
+const COMMAND_GROUPS : LatexCommandGroup[] = [
+	GREEKS,
+	MATH_OPERATORS, 
+	SET_SYMBOLS,
+	LOGIC_SYMBOLS
 ]
 
 /*

@@ -29,3 +29,9 @@ body {
     transform: scale(1.15);
     transition: all ease 0.25s;
 }
+
+.supercharged-table h2 {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 0;
+}
