@@ -1,4 +1,4 @@
-import { App, Editor, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, editorEditorField, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -26,9 +26,10 @@ export default class MyPlugin extends Plugin {
 	latexLeaf : WorkspaceLeaf;
 	activeEditor : Editor;
 
-	async onload() { //this funtion gets excecuted once the plugin gets activated
+	async onload() { //this funtion gets executed once the plugin gets activated
 		await this.loadSettings();
-		await loadMathJax();
+		//await loadMathJax();
+		console.log(this.latexLeaf);
 
 		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(this, leaf)));
 
@@ -36,12 +37,12 @@ export default class MyPlugin extends Plugin {
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
 			editorCallback: (editor: Editor, view : MarkdownView) => {
+				this.activeEditor = editor;
+
 				if(this.latexLeaf) {
 					app.workspace.setActiveLeaf(this.latexLeaf);
 					return;
 				}
-
-				this.activeEditor = editor;
 
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
@@ -60,14 +61,14 @@ export default class MyPlugin extends Plugin {
 			]
 		});
 
-		//make sure the leaf gets detached when the user changes to a different editor
 		/*
+		//make sure the leaf gets detached when the user changes to a different editor
 		this.app.workspace.on('active-leaf-change', (leaf : WorkspaceLeaf) => { 
 			// note sg: potential event handler memory leak when extension is repeatedly opened and closed
-			console.log(1);
-			this.latexLeaf?.detach();
+			console.log(this.activeEditor.getCursor('from'));
 		});
 		*/
+		
 
 		
 		//This adds a settings tab so the user can configure various aspects of the plugin
@@ -141,11 +142,12 @@ class LatexContextView extends ItemView {
 		return LatexContextViewType;
 	}
 
-	onload() : void {
-		const LINE_WIDTH = 2; // number of commands per table line
+	async onload() : Promise<void> {
+		//const LINE_WIDTH = 2; // number of commands per table line
+		await loadMathJax();
 
 		if(!this.plugin.activeEditor) {
-			console.warn('unable to determine active editor');
+			this.leaf.detach();
 			return;
 		}
 
@@ -193,7 +195,7 @@ class LatexContextView extends ItemView {
 
 		
 		//could this be it?
-		MarkdownPreviewView.renderMarkdown;
+		//MarkdownPreviewView.renderMarkdown;
 	}
 
 	onunload(): void {
