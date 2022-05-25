@@ -24,7 +24,7 @@ body {
     flex-wrap: wrap;
 }
 
-.supercharged-table button:hover, .supercharged-table button:focus {
+.supercharged-table button:hover /*, .supercharged-table button:focus*/ {
     filter:invert(100%);
     transform: scale(1.15);
     transition: all ease 0.25s;

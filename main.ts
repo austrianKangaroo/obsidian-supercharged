@@ -27,9 +27,7 @@ export default class MyPlugin extends Plugin {
 	activeEditor : Editor;
 
 	async onload() { //this funtion gets executed once the plugin gets activated
-		await this.loadSettings();
-		//await loadMathJax();
-		console.log(this.latexLeaf);
+		 await this.loadSettings();
 
 		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(this, leaf)));
 
@@ -147,6 +145,11 @@ class LatexContextView extends ItemView {
 		await loadMathJax();
 
 		if(!this.plugin.activeEditor) {
+			/*
+			this happens if the app gets closed and reopened
+			in this case, we want to close the leaf as we have no access to an editor.
+			this means that our button callbacks can't know where to insert text
+			*/
 			this.leaf.detach();
 			return;
 		}
@@ -159,28 +162,13 @@ class LatexContextView extends ItemView {
 		const rootEl = container.createDiv({cls: 'supercharged-table'}); //document.createElement('div');
 
 		
-		GREEKS.forEach((command, index) => {
+		MATH_OPERATORS.forEach((command, index) => {
 			drawButton(command, rootEl, () => {
 				//this.focusButton(index);
 				insertText(this.plugin.activeEditor, command);
 			});
 			//this.buttons.push(button);
 		});
-		/*while(remaining.length > 0) {
-			const tableRow = table.insertRow();
-			const buttonRow : HTMLButtonElement[] = [];
-			remaining.splice(0, LatexContextView.LINE_WIDTH).forEach((command, colIndex) => {
-				const cell = tableRow.insertCell();
-				const button = drawButton(command, cell, () => {
-					this.focusButton(rowIndex, colIndex);
-					insertText(this.plugin.activeEditor, `${command}`);
-				});
-				buttonRow.push(button);
-			});
-			this.buttons.push(buttonRow);
-			//const row = remaining.splice(0, LINE_WIDTH);
-			rowIndex++;
-		}*/
 
 
 		// TODO: only react to keyevent if leaf is focused
@@ -192,10 +180,6 @@ class LatexContextView extends ItemView {
 			this.changeFocus(1);
 		}));
 		*/
-
-		
-		//could this be it?
-		//MarkdownPreviewView.renderMarkdown;
 	}
 
 	onunload(): void {
@@ -204,12 +188,14 @@ class LatexContextView extends ItemView {
 }
 
 function drawButton(latexCommand : string, parent : HTMLElement, callback : () => any) : HTMLButtonElement {
-	/*const button = parent.appendChild(renderMath(latexCommand, true));
+	/*
+	const button = parent.appendChild(renderMath(latexCommand, true));
 	button.onClickEvent(event => {
 		if(event.button == 0) { // main (left) mouse button
 			callback();
 		}
-	});*/
+	});
+	*/
 	const button = parent.createEl('button');
 	button.appendChild(renderMath(latexCommand, true));
 	button.onClickEvent(callback);
@@ -227,14 +213,69 @@ const GREEKS : LatexCommandGroup = [
 	'\\beta',
 	'\\gamma',
 	'\\delta',
-	'\\epsilon'
+	'\\epsilon',
+	'\\varepsilon',
+	'\\zeta',
+	'\\eta',
+	'\\theta',
+	'\\vartheta',
+	'\\iota',
+	'\\kappa',
+	'\\varkappa',
+	'\\lambda',
+	'\\mu',
+	'\\nu',
+	'\\xi',
+	'\\omicron',
+	'\\pi',
+	'\\varpi',
+	'\\rho',
+	'\\varrho',
+	'\\sigma',
+	'\\varsigma',
+	'\\tau',
+	'\\upsilon',
+	'\\phi',
+	'\\varphi',
+	'\\chi',
+	'\\psi',
+	'\\omega'
+]
+
+const SET_SYMBOLS : LatexCommandGroup = [
+	'\\in',
+	'\\notin',
+	'\\ni',
+	'\\notni',
+	'\\subseteq',
+	'\\supseteq',
+	'\\cup',
+	'\\cap',
+	'\\times'
+]
+
+const LOGIC_SYMBOLS : LatexCommandGroup = [
+	'\\exists',
+	'\\exists!',
+	'\\nexists',
+	'\\forall',
+	'\\neg',
+	'\\land',
+	'\\lor',
+	'\\Rightarrow',
+	'\\Leftarrow',
+	'\\Leftrightarrow',
+	'\\top',
+	'\\bot'
 ]
 
 const MATH_OPERATORS : LatexCommandGroup = [
 	'+',
 	'*',
 	'\\cdot',
-	'\\oplus'
+	'\\oplus', 
+	'\\sum_{i=1}^n a_i',
+	'\\int_a^b f(x)dx'
 ]
 
 /*
@@ -280,6 +321,7 @@ class SampleSettingTab extends PluginSettingTab {
 						//console.log('Secret: ' + value);
 						this.plugin.settings.custom_commands[i] = value;
 						await this.plugin.saveSettings();
+						this.plugin.latexLeaf?.detach();
 					}));
 			}
 	}
