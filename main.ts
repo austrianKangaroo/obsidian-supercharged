@@ -60,10 +60,13 @@ export default class MyPlugin extends Plugin {
 		});
 
 		//make sure the leaf gets detached when the user changes to a different editor
+		/*
 		this.app.workspace.on('active-leaf-change', (leaf : WorkspaceLeaf) => { 
 			// note sg: potential event handler memory leak when extension is repeatedly opened and closed
+			console.log(1);
 			this.latexLeaf?.detach();
 		});
+		*/
 
 		
 		//This adds a settings tab so the user can configure various aspects of the plugin
@@ -100,10 +103,9 @@ class LatexContextView extends ItemView {
 
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 	visible = false;
-	private buttons : HTMLButtonElement[];
+	//private buttons : HTMLButtonElement[];
 
 	
-	private focusedCol = -1;
 	//private focusedCol = -1;
 	
 
@@ -114,6 +116,7 @@ class LatexContextView extends ItemView {
 		this.plugin = plugin;
 	}
 
+	/*
 	changeFocus(dx : number) {
 		const newCol = (this.focusedCol + dx + this.buttons.length) % this.buttons.length;
 		this.focusButton(newCol);
@@ -127,11 +130,7 @@ class LatexContextView extends ItemView {
 			this.focusedCol = colIndex;
 		}
 	}
-
-	/*async onClose() : Promise<void> {
-		console.log('closing');
-		this.visible = false;
-	}*/
+	*/
 
 	getDisplayText() : string {
 		return 'Obsidian Supercharged';
@@ -150,7 +149,7 @@ class LatexContextView extends ItemView {
 		}
 
 
-		this.buttons = [];
+		//this.buttons = [];
 
 		const container = this.contentEl;
 
@@ -158,11 +157,11 @@ class LatexContextView extends ItemView {
 
 		
 		GREEKS.forEach((command, index) => {
-			const button = drawButton(command, rootEl, () => {
-				this.focusButton(index);
+			drawButton(command, rootEl, () => {
+				//this.focusButton(index);
 				insertText(this.plugin.activeEditor, command);
 			});
-			this.buttons.push(button);
+			//this.buttons.push(button);
 		});
 		/*while(remaining.length > 0) {
 			const tableRow = table.insertRow();
@@ -182,12 +181,14 @@ class LatexContextView extends ItemView {
 
 
 		// TODO: only react to keyevent if leaf is focused
+		/*
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowLeft', () => {
 			this.changeFocus(-1);
 		}));
 		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
 			this.changeFocus(1);
 		}));
+		*/
 
 		
 		//could this be it?
