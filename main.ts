@@ -192,7 +192,7 @@ class LatexContextView extends ItemView {
 				drawButton(command, content, () => {
 					//this.focusButton(index);
 					insertText(this.plugin.activeEditor, command);
-					this.plugin.activeEditor.focus();
+					this.plugin.activeEditor.focus(); // remove focus after the button has been pressed
 				});
 				//this.buttons.push(button);
 			})
