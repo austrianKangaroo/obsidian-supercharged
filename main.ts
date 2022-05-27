@@ -50,7 +50,7 @@ export default class MyPlugin extends Plugin {
 					active: true
 				});
 			},
-			hotkeys: [
+			hotkeys: [ // can be changed by the user
 				{
 					key: 'm',
 					modifiers: [

@@ -4,7 +4,7 @@ export type LatexCommandGroup = {
 }
 
 const GREEKS: LatexCommandGroup = {
-    name: 'Greek lowercase letters',
+    name: 'Greek Symbols',
     commands: [
         '\\alpha',
         '\\beta',
