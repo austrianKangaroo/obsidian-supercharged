@@ -220,6 +220,7 @@ function drawButton(latexCommand : string, parent : HTMLElement, callback : () =
 
 function insertText(editor : Editor, text : string) {
 	editor.replaceRange(text, editor.getCursor());
+	editor.setCursor({ line: editor.getCursor().line, ch: editor.getCursor().ch + text.length});
 }
 
 type LatexCommandGroup = {
