@@ -18,6 +18,22 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	]
 }
 
+function collapse() {
+	var coll = document.getElementsByClassName("collapsible");
+	var i;
+	
+	for (i = 0; i < coll.length; i++) {
+	  coll[i].addEventListener("click", function() {
+		this.classList.toggle("active");
+		var content = this.nextElementSibling;
+		if (content.style.maxHeight){
+		  content.style.maxHeight = null;
+		} else {
+		  content.style.maxHeight = content.scrollHeight + "px";
+		}
+	  });
+	}}
+
 const LatexContextViewType = 'latex-context-view'
 
 export default class MyPlugin extends Plugin {
@@ -168,16 +184,19 @@ class LatexContextView extends ItemView {
 		}].concat(COMMAND_GROUPS);
 
 		commandGroups.forEach((group, i) => {
-			const header = rootEl.createEl('h2');
+			const groupDiv= rootEl.createDiv();
+			const header = groupDiv.createEl('h2',{cls:'collapsible'});
 			header.textContent = group.name;
+			const content = groupDiv.createDiv({cls:'content'});
 			group.commands.forEach((command, index) => {
-				drawButton(command, rootEl, () => {
+				drawButton(command, content, () => {
 					//this.focusButton(index);
 					insertText(this.plugin.activeEditor, command);
 				});
 				//this.buttons.push(button);
 			})
 		});
+		collapse();
 		await finishRenderMath();
 		/*
 		MATH_OPERATORS.forEach((command, index) => {
