@@ -1,5 +1,5 @@
-import { App, Editor, editorEditorField, finishRenderMath, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
-import { LatexCommandGroup, COMMAND_GROUPS } from 'latexCommands';
+import { App, Editor, finishRenderMath, ItemView, loadMathJax, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { COMMAND_GROUPS } from 'latexCommands';
 
 // Remember to rename these classes and interfaces!
 
@@ -67,7 +67,7 @@ export default class MyPlugin extends Plugin {
 					active: true
 				});
 			},
-			hotkeys: [
+			hotkeys: [ // can be changed by the user
 				{
 					key: 'm',
 					modifiers: [
@@ -193,6 +193,7 @@ class LatexContextView extends ItemView {
 				drawButton(command, content, () => {
 					//this.focusButton(index);
 					insertText(this.plugin.activeEditor, command);
+					this.plugin.activeEditor.focus(); // remove focus after the button has been pressed
 				});
 				//this.buttons.push(button);
 			})
@@ -240,9 +241,12 @@ function drawButton(latexCommand: string, parent: HTMLElement, callback: () => a
 	return button;
 }
 
-function insertText(editor: Editor, text: string) {
+function insertText(editor : Editor, text : string) {
+	const line = editor.getCursor().line;
+	const ch = editor.getCursor().ch;
+
 	editor.replaceRange(text, editor.getCursor());
-	editor.setCursor({ line: editor.getCursor().line, ch: editor.getCursor().ch + text.length });
+	editor.setCursor({ line: line, ch: ch + text.length });
 }
 
 
