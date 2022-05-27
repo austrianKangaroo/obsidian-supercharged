@@ -27,9 +27,10 @@ function collapse() {
 		this.classList.toggle("active");
 		var content = this.nextElementSibling;
 		if (content.style.maxHeight){
-		  content.style.maxHeight = null;
+			content.style.maxHeight = null;
 		} else {
-		  content.style.maxHeight = content.scrollHeight + "px";
+			content.style.maxHeight = 0 + "px";
+		//	content.style.maxHeight = content.scrollHeight + "px";
 		}
 	  });
 	}}

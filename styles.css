@@ -16,7 +16,7 @@ body {
     margin:0px;
 }
 
-.supercharged-table {
+.supercharged-table .content{
     display: flex;
     align-items: stretch;
     flex-direction: row;
@@ -39,7 +39,18 @@ body {
 
 .content{
     padding: 0 18px;
-    max-height: 0;
+    max-height: 100%;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
 }
+
+.collapsible:after {
+    font-size: 13px;
+    margin-left: 5px;
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+  
+}
+  
+  .active:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    }
