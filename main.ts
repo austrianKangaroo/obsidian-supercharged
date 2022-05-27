@@ -221,8 +221,11 @@ function drawButton(latexCommand : string, parent : HTMLElement, callback : () =
 }
 
 function insertText(editor : Editor, text : string) {
+	const line = editor.getCursor().line;
+	const ch = editor.getCursor().ch;
+
 	editor.replaceRange(text, editor.getCursor());
-	editor.setCursor({ line: editor.getCursor().line, ch: editor.getCursor().ch + text.length});
+	editor.setCursor({ line: line, ch: ch + text.length });
 }
 
 
