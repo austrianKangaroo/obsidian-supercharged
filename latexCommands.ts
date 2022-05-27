@@ -47,10 +47,16 @@ const SET_SYMBOLS : LatexCommandGroup = {
 	'\\notin',
 	'\\ni',
 	'\\subseteq',
+    '\\subset',
 	'\\supseteq',
+    '\\supset',
 	'\\cup',
 	'\\cap',
-	'\\times'
+	'\\times',
+    '\\mathcal{P}(X)',
+    '\\bigcup_{i \\in I} A_i',
+    '\\bigcap_{i \\in I} A_i',
+    '\\mathcal{S}'
 ]
 }
 

@@ -1,4 +1,4 @@
-import { App, Editor, editorEditorField, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, editorEditorField, finishRenderMath, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 import { LatexCommandGroup, COMMAND_GROUPS } from 'latexCommands';
 
 // Remember to rename these classes and interfaces!
@@ -177,7 +177,8 @@ class LatexContextView extends ItemView {
 				});
 				//this.buttons.push(button);
 			})
-		})
+		});
+		await finishRenderMath();
 		/*
 		MATH_OPERATORS.forEach((command, index) => {
 			drawButton(command, rootEl, () => {
