@@ -1,15 +1,15 @@
-import { App, Editor, editorEditorField, finishRenderMath, ItemView, loadMathJax, MarkdownPreviewView, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
-import { LatexCommandGroup, COMMAND_GROUPS } from 'latexCommands';
+import { App, Editor, finishRenderMath, ItemView, loadMathJax, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { COMMAND_GROUPS } from 'latexCommands';
 
 // Remember to rename these classes and interfaces!
 
 //gives the User the opportunity to choose their 5 latex codes for their interface
 interface MyPluginSettings {
-	custom_commands : string[];
+	custom_commands: string[];
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	custom_commands : [
+	custom_commands: [
 		'command',
 		'command',
 		'command',
@@ -18,27 +18,43 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	]
 }
 
+function collapse() {
+	var coll = document.getElementsByClassName("collapsible");
+	var i;
+	
+	for (i = 0; i < coll.length; i++) {
+	  coll[i].addEventListener("click", function() {
+		this.classList.toggle("active");
+		var content = this.nextElementSibling;
+		if (content.style.maxHeight){
+		  content.style.maxHeight = null;
+		} else {
+		  content.style.maxHeight = content.scrollHeight + "px";
+		}
+	  });
+	}}
+
 const LatexContextViewType = 'latex-context-view'
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
-	latexContextView : LatexContextView;
-	latexLeaf : WorkspaceLeaf;
-	activeEditor : Editor;
+	latexContextView: LatexContextView;
+	latexLeaf: WorkspaceLeaf;
+	activeEditor: Editor;
 
 	async onload() { //this funtion gets executed once the plugin gets activated
-		 await this.loadSettings();
+		await this.loadSettings();
 
 		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(this, leaf)));
 
 		this.addCommand({
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
-			editorCallback: (editor: Editor, view : MarkdownView) => {
+			editorCallback: (editor: Editor, view: MarkdownView) => {
 				this.activeEditor = editor;
 
-				if(this.latexLeaf) {
+				if (this.latexLeaf) {
 					app.workspace.setActiveLeaf(this.latexLeaf);
 					return;
 				}
@@ -50,7 +66,7 @@ export default class MyPlugin extends Plugin {
 					active: true
 				});
 			},
-			hotkeys : [
+			hotkeys: [ // can be changed by the user
 				{
 					key: 'm',
 					modifiers: [
@@ -67,29 +83,29 @@ export default class MyPlugin extends Plugin {
 			console.log(this.activeEditor.getCursor('from'));
 		});
 		*/
-		
 
-		
+
+
 		//This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
-/*	
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-		*/
+		/*	
+				// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
+				// Using this function will automatically remove the event listener when this plugin is disabled.
+				this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+					console.log('click', evt);
+				});
+		
+				// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
+				this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+				*/
 	}
 
 	onunload() {
 		this.latexLeaf?.detach();
 	}
 
-	
+
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
@@ -100,19 +116,19 @@ export default class MyPlugin extends Plugin {
 }
 
 class LatexContextView extends ItemView {
-	plugin : MyPlugin;
+	plugin: MyPlugin;
 
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 	visible = false;
 	//private buttons : HTMLButtonElement[];
 
-	
+
 	//private focusedCol = -1;
-	
+
 
 	//static LINE_WIDTH = 4; // number of commands per table line
 
-	constructor(plugin : MyPlugin, leaf : WorkspaceLeaf) {
+	constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
 		super(leaf);
 		this.plugin = plugin;
 	}
@@ -133,19 +149,19 @@ class LatexContextView extends ItemView {
 	}
 	*/
 
-	getDisplayText() : string {
+	getDisplayText(): string {
 		return 'Obsidian Supercharged';
 	}
 
-	getViewType() : string {
+	getViewType(): string {
 		return LatexContextViewType;
 	}
 
-	async onload() : Promise<void> {
+	async onload(): Promise<void> {
 		//const LINE_WIDTH = 2; // number of commands per table line
 		await loadMathJax();
 
-		if(!this.plugin.activeEditor) {
+		if (!this.plugin.activeEditor) {
 			/*
 			this happens if the app gets closed and reopened
 			in this case, we want to close the leaf as we have no access to an editor.
@@ -160,24 +176,28 @@ class LatexContextView extends ItemView {
 
 		const container = this.contentEl;
 
-		const rootEl = container.createDiv({cls: 'supercharged-table'}); //document.createElement('div');
+		const rootEl = container.createDiv({ cls: 'supercharged-table' }); //document.createElement('div');
 
 		const commandGroups = [{
-			name : 'custom commands',
-			commands : this.plugin.settings.custom_commands
+			name: 'custom commands',
+			commands: this.plugin.settings.custom_commands
 		}].concat(COMMAND_GROUPS);
 
 		commandGroups.forEach((group, i) => {
-			const header = rootEl.createEl('h2');
+			const groupDiv= rootEl.createDiv();
+			const header = groupDiv.createEl('h2',{cls:'collapsible'});
 			header.textContent = group.name;
+			const content = groupDiv.createDiv({cls:'content'});
 			group.commands.forEach((command, index) => {
-				drawButton(command, rootEl, () => {
+				drawButton(command, content, () => {
 					//this.focusButton(index);
 					insertText(this.plugin.activeEditor, command);
+					this.plugin.activeEditor.focus();
 				});
 				//this.buttons.push(button);
 			})
 		});
+		collapse();
 		await finishRenderMath();
 		/*
 		MATH_OPERATORS.forEach((command, index) => {
@@ -205,7 +225,7 @@ class LatexContextView extends ItemView {
 	}
 }
 
-function drawButton(latexCommand : string, parent : HTMLElement, callback : () => any) : HTMLButtonElement {
+function drawButton(latexCommand: string, parent: HTMLElement, callback: () => any): HTMLButtonElement {
 	/*
 	const button = parent.appendChild(renderMath(latexCommand, true));
 	button.onClickEvent(event => {
@@ -259,13 +279,13 @@ class SampleSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 		containerEl.empty();
-		containerEl.createEl('h2', {text: 'Define your own latex commands'});
+		containerEl.createEl('h2', { text: 'Define your own latex commands' });
 
-		for (let i=0; i<this.plugin.settings.custom_commands.length; i++) {
+		for (let i = 0; i < this.plugin.settings.custom_commands.length; i++) {
 			new Setting(containerEl)
-				.setName('Command_'+i)
+				.setName('Command_' + i)
 				//.setDesc('It\'s a secret')
 				.addText(text => text
 					.setPlaceholder('command')
@@ -276,6 +296,6 @@ class SampleSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 						this.plugin.latexLeaf?.detach();
 					}));
-			}
+		}
 	}
 }
