@@ -11,6 +11,7 @@ export class CanvasView extends ItemView {
     private canvas : HTMLCanvasElement;
 
     private strokeColor = '#000000';
+    private strokeWidth = 10;
 
     constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
 		super(leaf);
@@ -66,16 +67,28 @@ export class CanvasView extends ItemView {
 
 
         const colorPicker = rootEl.createDiv();
-        const input = colorPicker.createEl('input', { type : 'color' });
+        const colorPickerLabel = colorPicker.createEl('label');
+        const colorInput = colorPicker.createEl('input', { type : 'color' });
         const COLOR_PICKER_ID = 'color-picker';
-        input.id = COLOR_PICKER_ID;
-        input.addEventListener('change', event => { this.strokeColor = input.value; });
-        const label = colorPicker.createEl('label');
-        label.setAttribute('for', COLOR_PICKER_ID);
-        label.textContent = 'Color';
+        colorInput.id = COLOR_PICKER_ID;
+        colorInput.addEventListener('change', event => { this.strokeColor = colorInput.value; });
+        
+        colorPickerLabel.setAttribute('for', COLOR_PICKER_ID);
+        colorPickerLabel.textContent = 'Color';
+
+        const strokeWidthSlider = rootEl.createDiv();
+        const sliderInputLabel = strokeWidthSlider.createEl('label');
+        const sliderInput = strokeWidthSlider.createEl('input', { type : 'range' });
+        sliderInput.setAttribute('min', '5');
+        sliderInput.setAttribute('max', '25');
+        const SLIDER_INPUT_ID = 'slider-input';
+        sliderInput.id = SLIDER_INPUT_ID;
+        sliderInput.oninput = () => { this.strokeWidth = parseInt(sliderInput.value); }
+        sliderInputLabel.setAttribute('for', SLIDER_INPUT_ID);
+        sliderInputLabel.textContent = 'Pencil width';
 
 
-        this.canvas = rootEl.createEl('canvas', {cls: 'supercharged-canvas'});
+        this.canvas = rootEl.createEl('canvas', { cls: 'supercharged-canvas' });
 
         const ctx = this.canvas.getContext("2d");
 
@@ -112,10 +125,10 @@ export class CanvasView extends ItemView {
             return;
         }
 
-        ctx.lineWidth = 10;
+        ctx.lineWidth = this.strokeWidth;
         ctx.lineCap = "round";
         
-        ctx.strokeStyle = this.strokeColor; //'green'; // TODO: change
+        ctx.strokeStyle = /*this.erase ? TRANSPARENT : */this.strokeColor;
 
 
         ctx.lineTo(event.offsetX, event.offsetY);
@@ -136,6 +149,7 @@ export class CanvasView extends ItemView {
         return '\n<div><img src = \"' + urlData + '\"></div>\n';
     }
 
+    /*
     private download() : void { // TODO: do we need this?
         console.log(this.canvas.toDataURL());
         const link = this.containerEl.createEl('a');
@@ -143,6 +157,7 @@ export class CanvasView extends ItemView {
         link.href = this.canvas.toDataURL();
         link.click();
     }
+    */
 
     private async copyToClipboard(urlData : string) : Promise<void> {
         navigator.clipboard.writeText(this.convertToImage(urlData));

@@ -1,3 +1,5 @@
+// old code, see canvas.ts for new version
+
 window.addEventListener("load",()=>{
     const canvas = document.querySelector("#canvas");
     const ctx = canvas.getContext("2d");
