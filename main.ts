@@ -100,7 +100,7 @@ export default class MyPlugin extends Plugin {
 			},
 			hotkeys : [
 				{
-					key : 'k',
+					key : 'j',
 					modifiers : [
 						'Ctrl'
 					]
