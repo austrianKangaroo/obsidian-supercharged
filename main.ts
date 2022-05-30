@@ -147,6 +147,14 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	insertText(editor : Editor, text : string) : void {
+		const line = editor.getCursor().line;
+		const ch = editor.getCursor().ch;
+	
+		editor.replaceRange(text, editor.getCursor());
+		editor.setCursor({ line: line, ch: ch + text.length });
+	}
 }
 
 class LatexContextView extends ItemView {
@@ -225,7 +233,7 @@ class LatexContextView extends ItemView {
 			group.commands.forEach((command, index) => {
 				drawButton(command, content, () => {
 					//this.focusButton(index);
-					insertText(this.plugin.activeEditor, command);
+					this.plugin.insertText(this.plugin.activeEditor, command);
 					this.plugin.activeEditor.focus(); // remove focus after the button has been pressed
 				});
 				//this.buttons.push(button);
@@ -273,15 +281,15 @@ function drawButton(latexCommand: string, parent: HTMLElement, callback: () => a
 	button.onClickEvent(callback);
 	return button;
 }
-
-function insertText(editor : Editor, text : string) {
+/*
+export function insertText(editor : Editor, text : string) : void {
 	const line = editor.getCursor().line;
 	const ch = editor.getCursor().ch;
 
 	editor.replaceRange(text, editor.getCursor());
 	editor.setCursor({ line: line, ch: ch + text.length });
 }
-
+*/
 
 
 

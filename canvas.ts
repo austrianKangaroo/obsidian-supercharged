@@ -8,6 +8,8 @@ export class CanvasView extends ItemView {
 
     private painting : boolean = false;
 
+    private canvas : HTMLCanvasElement;
+
     constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
         console.log('LOG: constructor for canvasview called');
 		super(leaf);
@@ -43,47 +45,39 @@ export class CanvasView extends ItemView {
 
         rootEl.textContent = 'SUCCESS';
 
-        const canvas = rootEl.createEl('canvas', {cls: 'supercharged-canvas'});
+        this.canvas = rootEl.createEl('canvas', {cls: 'supercharged-canvas'});
 
-        const ctx = canvas.getContext("2d");
+        const ctx = this.canvas.getContext("2d");
 
         //resizing
-        canvas.height = container.scrollHeight;//window.innerHeight;
-        canvas.width = container.scrollWidth;
+        this.canvas.height = container.scrollHeight;//window.innerHeight;
+        this.canvas.width = container.scrollWidth;
 
-        canvas.on('mousedown', '.supercharged-canvas', (event, _target) => {
+        this.canvas.on('mousedown', '.supercharged-canvas', (event, _target) => {
             this.painting = true;
             console.log('LOG: Mouse down');
             this.draw(event, ctx);
         });
 
-        canvas.on('mouseup', '.supercharged-canvas', (event, _target) => {
+        this.canvas.on('mouseup', '.supercharged-canvas', (event, _target) => {
             this.painting = false;
             ctx.beginPath();
         });
 
-        canvas.on('mousemove', '.supercharged-canvas', (event, _target) => {
+        this.canvas.on('mousemove', '.supercharged-canvas', (event, _target) => {
             this.draw(event, ctx);
         });
 
         const DOWNLOAD_BUTTON = rootEl.createEl('button');
-        DOWNLOAD_BUTTON.textContent = 'use';
-        DOWNLOAD_BUTTON.onClickEvent(() => {
-            //var canvas = document.querySelector("#canvas");
-            console.log(canvas.toDataURL());
-            const link = rootEl.createEl('a');
-            link.download = 'download.png';
-            link.href = canvas.toDataURL();
-            link.click();
-            //link.delete;
-          });
+        DOWNLOAD_BUTTON.textContent = 'insert image';
+        DOWNLOAD_BUTTON.onClickEvent(() => { this.insertImage(this.canvas.toDataURL()); });
           
 
           const CLEAR_BUTTON = rootEl.createEl('button');
           CLEAR_BUTTON.textContent = 'clear';
           CLEAR_BUTTON.onClickEvent(() => {
-            var ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            var ctx = this.canvas.getContext("2d");
+            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
           });
 	}
 
@@ -112,4 +106,19 @@ export class CanvasView extends ItemView {
         ctx.moveTo(event.clientX, event.clientY);
         */
     }
+
+    private insertImage(urlData : string) : void {
+        if(this.canvas && this.plugin?.activeEditor) {
+            this.plugin.insertText(this.plugin.activeEditor, '<img src = \"' + urlData + '\">');
+        }
+    }
+
+    private download() : void {
+        console.log(this.canvas.toDataURL());
+        const link = this.containerEl.createEl('a');
+        link.download = 'download.png';
+        link.href = this.canvas.toDataURL();
+        link.click();
+        //this.insertImage(this.canvas.toDataURL());
+      }
 }
