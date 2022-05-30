@@ -1,5 +1,6 @@
 import { App, Editor, finishRenderMath, ItemView, loadMathJax, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 import { COMMAND_GROUPS } from 'latexCommands';
+import { CanvasContextViewType, CanvasView } from 'canvas';
 
 // Remember to rename these classes and interfaces!
 
@@ -40,9 +41,11 @@ const LatexContextViewType = 'latex-context-view'
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
-	latexContextView: LatexContextView;
+	latexContextView: LatexContextView; // TODO: remove field?
 	latexLeaf: WorkspaceLeaf;
 	activeEditor: Editor;
+
+	canvasLeaf : WorkspaceLeaf;
 
 	async onload() { //this funtion gets executed once the plugin gets activated
 		await this.loadSettings();
@@ -77,6 +80,35 @@ export default class MyPlugin extends Plugin {
 			]
 		});
 
+		this.registerView(CanvasContextViewType, leaf => { return new CanvasView(this, leaf); });
+		this.addCommand({
+			id: 'open-supercharged-canvas',
+			name: 'Open Canvas',
+			editorCallback: (editor : Editor, _view : MarkdownView) => { // TODO: change to more reasonable callback
+				this.activeEditor = editor;
+				
+				if(this.canvasLeaf) {
+					this.app.workspace.setActiveLeaf(this.canvasLeaf);
+					return;
+				}
+
+				this.canvasLeaf = this.app.workspace.getRightLeaf(false);
+				this.app.workspace.revealLeaf(this.canvasLeaf);
+				this.canvasLeaf.setViewState({
+					type : CanvasContextViewType,
+					active : true
+				})
+			},
+			hotkeys : [
+				{
+					key : 'n',
+					modifiers : [
+						'Ctrl'
+					]
+				}
+			]
+		})
+
 		/*
 		//make sure the leaf gets detached when the user changes to a different editor
 		this.app.workspace.on('active-leaf-change', (leaf : WorkspaceLeaf) => { 
@@ -104,6 +136,7 @@ export default class MyPlugin extends Plugin {
 
 	onunload() {
 		this.latexLeaf?.detach();
+		this.canvasLeaf?.detach();
 	}
 
 
@@ -120,7 +153,7 @@ class LatexContextView extends ItemView {
 	plugin: MyPlugin;
 
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
-	visible = false;
+	//visible = false;
 	//private buttons : HTMLButtonElement[];
 
 
