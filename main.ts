@@ -41,16 +41,15 @@ const LatexContextViewType = 'latex-context-view'
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
-	latexContextView: LatexContextView; // TODO: remove field?
 	latexLeaf: WorkspaceLeaf;
 	activeEditor: Editor;
 
 	canvasLeaf : WorkspaceLeaf;
 
-	async onload() { //this funtion gets executed once the plugin gets activated
+	async onload() { // this funtion gets executed once the plugin gets activated
 		await this.loadSettings();
 
-		this.registerView(LatexContextViewType, leaf => (this.latexContextView = new LatexContextView(this, leaf)));
+		this.registerView(LatexContextViewType, leaf => new LatexContextView(this, leaf));
 
 		this.addCommand({
 			id: 'open-latex-leaf',
@@ -80,11 +79,11 @@ export default class MyPlugin extends Plugin {
 			]
 		});
 
-		this.registerView(CanvasContextViewType, leaf => { return new CanvasView(this, leaf); });
+		this.registerView(CanvasContextViewType, leaf => new CanvasView(this, leaf));
 		this.addCommand({
 			id: 'open-supercharged-canvas',
 			name: 'Open Canvas',
-			editorCallback: (editor : Editor, _view : MarkdownView) => { // TODO: change to more reasonable callback
+			editorCallback: (editor : Editor, _view : MarkdownView) => {
 				this.activeEditor = editor;
 
 				if(this.canvasLeaf) {
@@ -109,29 +108,8 @@ export default class MyPlugin extends Plugin {
 			]
 		})
 
-		/*
-		//make sure the leaf gets detached when the user changes to a different editor
-		this.app.workspace.on('active-leaf-change', (leaf : WorkspaceLeaf) => { 
-			// note sg: potential event handler memory leak when extension is repeatedly opened and closed
-			console.log(this.activeEditor.getCursor('from'));
-		});
-		*/
-
-
-
 		//This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		/*	
-				// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-				// Using this function will automatically remove the event listener when this plugin is disabled.
-				this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-					console.log('click', evt);
-				});
-		
-				// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-				this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-				*/
 	}
 
 	onunload() {
@@ -147,41 +125,26 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	insertText(editor : Editor, text : string) : void {
+		const line = editor.getCursor().line;
+		const ch = editor.getCursor().ch;
+	
+		editor.replaceRange(text, editor.getCursor());
+		editor.setCursor({ line: line, ch: ch + text.length });
+	}
 }
 
 class LatexContextView extends ItemView {
 	plugin: MyPlugin;
 
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
-	//visible = false;
-	//private buttons : HTMLButtonElement[];
-
-
-	//private focusedCol = -1;
-
-
-	//static LINE_WIDTH = 4; // number of commands per table line
 
 	constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
 		super(leaf);
 		this.plugin = plugin;
 	}
 
-	/*
-	changeFocus(dx : number) {
-		const newCol = (this.focusedCol + dx + this.buttons.length) % this.buttons.length;
-		this.focusButton(newCol);
-	}
-
-	focusButton(colIndex : number) {
-		this.buttons.at(this.focusedCol).blur();
-
-		if(0 <= colIndex && colIndex < this.buttons.length) {
-			this.buttons[colIndex].focus();
-			this.focusedCol = colIndex;
-		}
-	}
-	*/
 
 	getDisplayText(): string {
 		return 'Obsidian Supercharged';
@@ -192,7 +155,6 @@ class LatexContextView extends ItemView {
 	}
 
 	async onload(): Promise<void> {
-		//const LINE_WIDTH = 2; // number of commands per table line
 		await loadMathJax();
 
 		if (!this.plugin.activeEditor) {
@@ -205,12 +167,9 @@ class LatexContextView extends ItemView {
 			return;
 		}
 
-
-		//this.buttons = [];
-
 		const container = this.contentEl;
 
-		const rootEl = container.createDiv({ cls: 'supercharged-table' }); //document.createElement('div');
+		const rootEl = container.createDiv({ cls: 'supercharged-table' });
 
 		const commandGroups = [{
 			name: 'custom commands',
@@ -224,85 +183,27 @@ class LatexContextView extends ItemView {
 			const content = groupDiv.createDiv({cls:'content'});
 			group.commands.forEach((command, index) => {
 				drawButton(command, content, () => {
-					//this.focusButton(index);
-					insertText(this.plugin.activeEditor, command);
-					this.plugin.activeEditor.focus(); // remove focus after the button has been pressed
+					this.plugin.insertText(this.plugin.activeEditor, command);
+					this.plugin.activeEditor.focus(); // return focus to editor after the button has been pressed
 				});
-				//this.buttons.push(button);
 			})
 		});
 		collapse();
 		await finishRenderMath();
-		/*
-		MATH_OPERATORS.forEach((command, index) => {
-			drawButton(command, rootEl, () => {
-				//this.focusButton(index);
-				insertText(this.plugin.activeEditor, command);
-			});
-			//this.buttons.push(button);
-		});
-*/
-
-		// TODO: only react to keyevent if leaf is focused
-		/*
-		this.registerScopeEvent(this.app.scope.register([], 'ArrowLeft', () => {
-			this.changeFocus(-1);
-		}));
-		this.registerScopeEvent(this.app.scope.register([], 'ArrowRight', () => {
-			this.changeFocus(1);
-		}));
-		*/
 	}
 
 	onunload(): void {
 		this.plugin.latexLeaf = null;
+		this.plugin.canvasLeaf = null;
 	}
 }
 
 function drawButton(latexCommand: string, parent: HTMLElement, callback: () => any): HTMLButtonElement {
-	/*
-	const button = parent.appendChild(renderMath(latexCommand, true));
-	button.onClickEvent(event => {
-		if(event.button == 0) { // main (left) mouse button
-			callback();
-		}
-	});
-	*/
 	const button = parent.createEl('button');
 	button.appendChild(renderMath(latexCommand, true));
 	button.onClickEvent(callback);
 	return button;
 }
-
-function insertText(editor : Editor, text : string) {
-	const line = editor.getCursor().line;
-	const ch = editor.getCursor().ch;
-
-	editor.replaceRange(text, editor.getCursor());
-	editor.setCursor({ line: line, ch: ch + text.length });
-}
-
-
-
-
-/*
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
-*/
-
 
 class SampleSettingTab extends PluginSettingTab {
 	plugin: MyPlugin;
@@ -320,12 +221,10 @@ class SampleSettingTab extends PluginSettingTab {
 		for (let i = 0; i < this.plugin.settings.custom_commands.length; i++) {
 			new Setting(containerEl)
 				.setName('Command_' + i)
-				//.setDesc('It\'s a secret')
 				.addText(text => text
 					.setPlaceholder('command')
 					.setValue(this.plugin.settings.custom_commands[i])
 					.onChange(async (value) => {
-						//console.log('Secret: ' + value);
 						this.plugin.settings.custom_commands[i] = value;
 						await this.plugin.saveSettings();
 						this.plugin.latexLeaf?.detach();
