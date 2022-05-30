@@ -1,4 +1,4 @@
-import { App, Editor, finishRenderMath, ItemView, loadMathJax, MarkdownView, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
+import { App, Editor, finishRenderMath, ItemView, loadMathJax, MarkdownView, Notice, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
 import { COMMAND_GROUPS } from 'latexCommands';
 import { CanvasContextViewType, CanvasView } from 'canvas';
 
@@ -147,7 +147,7 @@ class LatexContextView extends ItemView {
 
 
 	getDisplayText(): string {
-		return 'Obsidian Supercharged';
+		return 'Obsidian Supercharged - Latex';
 	}
 
 	getViewType(): string {

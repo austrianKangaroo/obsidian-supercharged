@@ -1,5 +1,5 @@
 import MyPlugin from 'main';
-import { ItemView, WorkspaceLeaf } from 'obsidian';
+import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
 
 export const CanvasContextViewType = 'canvas-context-view';
 
@@ -9,6 +9,8 @@ export class CanvasView extends ItemView {
     private painting : boolean = false;
 
     private canvas : HTMLCanvasElement;
+
+    private strokeColor = '#000000';
 
     constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
 		super(leaf);
@@ -42,21 +44,36 @@ export class CanvasView extends ItemView {
 
 		const rootEl = container.createDiv({ cls: 'supercharged-canvas-div' });
 
+        const buttonDiv = rootEl.createDiv();
+
+        /*
         const INSERT_BUTTON = rootEl.createEl('button');
         INSERT_BUTTON.textContent = 'insert image';
         INSERT_BUTTON.onClickEvent(() => { this.insertImage(this.canvas.toDataURL()); });
+        */
 
-        const COPY_BUTTON = rootEl.createEl('button');
+        const COPY_BUTTON = buttonDiv.createEl('button');
         COPY_BUTTON.textContent = 'copy to clipboard';
         COPY_BUTTON.onClickEvent(() => { this.copyToClipboard(this.canvas.toDataURL()); });
           
 
-        const CLEAR_BUTTON = rootEl.createEl('button');
-        CLEAR_BUTTON.textContent = 'clear';
+        const CLEAR_BUTTON = buttonDiv.createEl('button');
+        CLEAR_BUTTON.textContent = 'clear canvas';
         CLEAR_BUTTON.onClickEvent(() => {
             var ctx = this.canvas.getContext("2d");
             ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         });
+
+
+        const colorPicker = rootEl.createDiv();
+        const input = colorPicker.createEl('input', { type : 'color' });
+        const COLOR_PICKER_ID = 'color-picker';
+        input.id = COLOR_PICKER_ID;
+        input.addEventListener('change', event => { this.strokeColor = input.value; });
+        const label = colorPicker.createEl('label');
+        label.setAttribute('for', COLOR_PICKER_ID);
+        label.textContent = 'Color';
+
 
         this.canvas = rootEl.createEl('canvas', {cls: 'supercharged-canvas'});
 
@@ -98,7 +115,7 @@ export class CanvasView extends ItemView {
         ctx.lineWidth = 10;
         ctx.lineCap = "round";
         
-        ctx.strokeStyle = 'green'; // TODO: change
+        ctx.strokeStyle = this.strokeColor; //'green'; // TODO: change
 
 
         ctx.lineTo(event.offsetX, event.offsetY);
@@ -107,11 +124,13 @@ export class CanvasView extends ItemView {
         ctx.moveTo(event.offsetX, event.offsetY);
     }
 
+    /*
     private insertImage(urlData : string) : void {
         if(this.canvas && this.plugin?.activeEditor) {
             this.plugin.insertText(this.plugin.activeEditor, this.convertToImage(urlData));
         }
     }
+    */
 
     private convertToImage(urlData : string) {
         return '\n<div><img src = \"' + urlData + '\"></div>\n';
@@ -127,5 +146,6 @@ export class CanvasView extends ItemView {
 
     private async copyToClipboard(urlData : string) : Promise<void> {
         navigator.clipboard.writeText(this.convertToImage(urlData));
+        new Notice('Copied to clipboard');
     }
 }
