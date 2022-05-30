@@ -100,9 +100,16 @@ export class CanvasView extends ItemView {
         ctx.lineWidth = 10;
         ctx.lineCap = "round";
 
+
+        ctx.lineTo(event.offsetX, event.offsetY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(event.offsetX, event.offsetY);
+        /*
         ctx.lineTo(event.clientX, event.clientY);
         ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(event.clientX, event.clientY);
+        */
     }
 }
