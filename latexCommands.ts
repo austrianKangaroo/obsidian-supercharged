@@ -114,7 +114,9 @@ const LOGIC_SYMBOLS: LatexCommandGroup = {
         '\\Leftarrow',
         '\\Leftrightarrow',
         '\\top',
-        '\\bot'
+        '\\bot',
+        '\\vdash',
+        '\\models'
     ]
 }
 
