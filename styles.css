@@ -2,6 +2,10 @@ body {
     color: aquamarine;
 }
 
+#canvas{
+    border: 2px solid black;
+}
+
 .ribbon-icon-class {
     fill: red;
 }
