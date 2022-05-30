@@ -11,7 +11,6 @@ export class CanvasView extends ItemView {
     private canvas : HTMLCanvasElement;
 
     constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
-        console.log('LOG: constructor for canvasview called');
 		super(leaf);
 		this.plugin = plugin;
 	}
@@ -31,7 +30,7 @@ export class CanvasView extends ItemView {
     onload(): void {
 		if (!this.plugin.activeEditor) {
 			/*
-			this happens if the app gets closed and reopened
+			this branch gets executed if the app gets closed and reopened
 			in this case, we want to close the leaf as we have no access to an editor.
 			this means that our button callbacks can't know where to insert text
 			*/
@@ -110,6 +109,5 @@ export class CanvasView extends ItemView {
         link.download = 'download.png';
         link.href = this.canvas.toDataURL();
         link.click();
-        //this.insertImage(this.canvas.toDataURL());
       }
 }
