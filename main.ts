@@ -86,7 +86,7 @@ export default class MyPlugin extends Plugin {
 			name: 'Open Canvas',
 			editorCallback: (editor : Editor, _view : MarkdownView) => { // TODO: change to more reasonable callback
 				this.activeEditor = editor;
-				
+
 				if(this.canvasLeaf) {
 					this.app.workspace.setActiveLeaf(this.canvasLeaf);
 					return;
@@ -97,7 +97,7 @@ export default class MyPlugin extends Plugin {
 				this.canvasLeaf.setViewState({
 					type : CanvasContextViewType,
 					active : true
-				})
+				});
 			},
 			hotkeys : [
 				{
