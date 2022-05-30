@@ -2,9 +2,8 @@ body {
     color: aquamarine;
 }
 
-#canvas{
+.supercharged-canvas-div canvas {
     border: 2px solid black;
-    fill: white;
 }
 
 .ribbon-icon-class {
@@ -56,6 +55,6 @@ body {
   
 }
   
-  .active:after {
+.active:after {
     content: '\02795'; /* Unicode character for "plus" sign (+) */
-    }
+}

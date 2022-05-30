@@ -1,7 +1,7 @@
 import MyPlugin from 'main';
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 
-export const CanvasContextViewType = 'canvas-context-view'
+export const CanvasContextViewType = 'canvas-context-view';
 
 export class CanvasView extends ItemView {
     plugin : MyPlugin;
@@ -16,7 +16,7 @@ export class CanvasView extends ItemView {
 	}
 
     getDisplayText(): string {
-		return 'Obsidian Supercharged';
+		return 'Obsidian Supercharged Drawing Canvas';
 	}
 
     getViewType(): string {
@@ -42,9 +42,13 @@ export class CanvasView extends ItemView {
 
 		const rootEl = container.createDiv({ cls: 'supercharged-canvas-div' });
 
-        const DOWNLOAD_BUTTON = rootEl.createEl('button');
-        DOWNLOAD_BUTTON.textContent = 'insert image';
-        DOWNLOAD_BUTTON.onClickEvent(() => { this.insertImage(this.canvas.toDataURL()); });
+        const INSERT_BUTTON = rootEl.createEl('button');
+        INSERT_BUTTON.textContent = 'insert image';
+        INSERT_BUTTON.onClickEvent(() => { this.insertImage(this.canvas.toDataURL()); });
+
+        const COPY_BUTTON = rootEl.createEl('button');
+        COPY_BUTTON.textContent = 'copy to clipboard';
+        COPY_BUTTON.onClickEvent(() => { this.copyToClipboard(this.canvas.toDataURL()); });
           
 
         const CLEAR_BUTTON = rootEl.createEl('button');
@@ -59,8 +63,12 @@ export class CanvasView extends ItemView {
         const ctx = this.canvas.getContext("2d");
 
         //resizing
+        /*
         this.canvas.height = container.scrollHeight;
         this.canvas.width = container.scrollWidth;
+        */
+       this.canvas.height = 500; // TODO: define proper size
+       this.canvas.width = 500;
 
         this.canvas.on('mousedown', '.supercharged-canvas', (event, _target) => {
             this.painting = true;
@@ -73,14 +81,14 @@ export class CanvasView extends ItemView {
         });
 
         this.canvas.on('mousemove', '.supercharged-canvas', (event, _target) => { this.draw(event, ctx); });
-
-
 	}
 
+    /*
     onResize() : void {
         console.log('LOG: resize');
         console.log(this.containerEl.scrollWidth);
     }
+    */
 
     private draw(event : MouseEvent, ctx : CanvasRenderingContext2D) : void {
         if(!this.painting){
@@ -89,6 +97,8 @@ export class CanvasView extends ItemView {
 
         ctx.lineWidth = 10;
         ctx.lineCap = "round";
+        
+        ctx.strokeStyle = 'green'; // TODO: change
 
 
         ctx.lineTo(event.offsetX, event.offsetY);
@@ -99,8 +109,12 @@ export class CanvasView extends ItemView {
 
     private insertImage(urlData : string) : void {
         if(this.canvas && this.plugin?.activeEditor) {
-            this.plugin.insertText(this.plugin.activeEditor, '<div><img src = \"' + urlData + '\"></div>');
+            this.plugin.insertText(this.plugin.activeEditor, this.convertToImage(urlData));
         }
+    }
+
+    private convertToImage(urlData : string) {
+        return '\n<div><img src = \"' + urlData + '\"></div>\n';
     }
 
     private download() : void { // TODO: do we need this?
@@ -109,5 +123,9 @@ export class CanvasView extends ItemView {
         link.download = 'download.png';
         link.href = this.canvas.toDataURL();
         link.click();
-      }
+    }
+
+    private async copyToClipboard(urlData : string) : Promise<void> {
+        navigator.clipboard.writeText(this.convertToImage(urlData));
+    }
 }
