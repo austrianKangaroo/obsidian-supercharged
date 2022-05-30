@@ -3,8 +3,8 @@ export type LatexCommandGroup = {
     commands: string[]
 }
 
-const GREEKS: LatexCommandGroup = {
-    name: 'Greek Symbols',
+const GREEKS_LOWERCASE: LatexCommandGroup = {
+    name: 'Greek Symbols Lowercase',
     commands: [
         '\\alpha',
         '\\beta',
@@ -37,6 +37,22 @@ const GREEKS: LatexCommandGroup = {
         '\\chi',
         '\\psi',
         '\\omega'
+    ]
+}
+const GREEKS_UPERCASE: LatexCommandGroup = {
+    name: 'Greek Symbols Uppercase',
+    commands: [
+        '\\Gamma',
+        '\\Delta',
+        '\\Theta',
+        '\\Lambda',
+        '\\Xi',
+        '\\Pi',
+        '\\Sigma',
+        '\\Upsilon',
+        '\\Phi',
+        '\\Psi',
+        '\\Omega'
     ]
 }
 
@@ -126,8 +142,19 @@ const LINEAR_ALGEBRA: LatexCommandGroup = {
         '\\mathbb{K}',
         '\\mathbb{K}^n',
         '\\mathbb{K}^{n \\times m}',
+        '\\mathbb{K}[X]',
+        '\\mathbb{K}[\\![ X ]\\!]',
         '\\oplus',
-        '\\otimes'
+        '\\otimes',
+        '\\hat p',
+        '\\langle x, y \\rangle',
+        '\\begin{pmatrix}x_1 \\\\ x_2 \\\\ x_3 \\end{pmatrix}',
+        '\\begin{pmatrix}a & b \\\\ c & d \\end{pmatrix}',
+        '\\begin{pmatrix}a & b & c \\\\ d & e & f \\\\ g & e & h \\end{pmatrix}',
+        '\\left | \\begin{array}{rrr} a & b & c \\\\ c & d & e \\\\ f & g & h \\end{array} \\right |',
+        '\\det A',
+        '\\ker A',
+        '\\text{im } A',
     ]
 }
 
@@ -156,15 +183,18 @@ const MATH_OPERATORS: LatexCommandGroup = {
         '+',
         '*',
         '\\cdot',
+        '\\div',
+        '\\frac{a}{b}',
         '\\oplus',
         '\\sum_{i=1}^n a_i',
-        '\\int_a^b f(x)dx'
+        '\\int_a^b f(x)dx',
     ]
 }
 
 
 export const COMMAND_GROUPS: LatexCommandGroup[] = [
-    GREEKS,
+    GREEKS_LOWERCASE,
+    GREEKS_UPERCASE,
     MATH_OPERATORS,
     RELATIONS,
     SET_SYMBOLS,
