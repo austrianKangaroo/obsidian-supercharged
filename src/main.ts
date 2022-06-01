@@ -2,8 +2,6 @@ import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, W
 import CanvasView from 'src/CanvasView';
 import LatexContextView from 'src/LatexContextView';
 
-// Remember to rename these classes and interfaces!
-
 //gives the User the opportunity to choose their 5 latex codes for their interface
 interface OSC_PluginSettings {
 	custom_commands: string[];
@@ -36,20 +34,8 @@ export default class OSC_Plugin extends Plugin {
 		this.addCommand({
 			id: 'open-latex-leaf',
 			name: 'Open Latex Leaf',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				this.activeEditor = editor;
-
-				if (this.latexLeaf) {
-					app.workspace.setActiveLeaf(this.latexLeaf);
-					return;
-				}
-
-				this.latexLeaf = this.app.workspace.getRightLeaf(false);
-				this.app.workspace.revealLeaf(this.latexLeaf)
-				this.latexLeaf.setViewState({
-					type: LatexContextView.TYPE,
-					active: true
-				});
+			editorCallback: (editor: Editor, _view: MarkdownView) => {
+				this.spawnLatexView(editor);
 			},
 			hotkeys: [ // can be changed by the user
 				{
@@ -65,20 +51,8 @@ export default class OSC_Plugin extends Plugin {
 		this.addCommand({
 			id: 'open-supercharged-canvas',
 			name: 'Open Canvas',
-			editorCallback: (editor : Editor, _view : MarkdownView) => {
-				this.activeEditor = editor;
-
-				if(this.canvasLeaf) {
-					this.app.workspace.setActiveLeaf(this.canvasLeaf);
-					return;
-				}
-
-				this.canvasLeaf = this.app.workspace.getRightLeaf(false);
-				this.app.workspace.revealLeaf(this.canvasLeaf);
-				this.canvasLeaf.setViewState({
-					type : CanvasView.TYPE,
-					active : true
-				});
+			editorCallback: (_editor : Editor, _view : MarkdownView) => {
+				this.spawnCanvasView();
 			},
 			hotkeys : [
 				{
@@ -91,7 +65,7 @@ export default class OSC_Plugin extends Plugin {
 		})
 
 		//This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new OSC_SettingTab(this.app, this));
 	}
 
 	onunload() {
@@ -115,11 +89,41 @@ export default class OSC_Plugin extends Plugin {
 		editor.replaceRange(text, editor.getCursor());
 		editor.setCursor({ line: line, ch: ch + text.length });
 	}
+
+	private spawnCanvasView() : void {
+		if(this.canvasLeaf) {
+			this.app.workspace.setActiveLeaf(this.canvasLeaf);
+			return;
+		}
+
+		this.canvasLeaf = this.app.workspace.getRightLeaf(false);
+		this.app.workspace.revealLeaf(this.canvasLeaf);
+		this.canvasLeaf.setViewState({
+			type : CanvasView.TYPE,
+			active : true
+		});
+	}
+
+	private spawnLatexView(editor : Editor) : void {
+		this.activeEditor = editor;
+
+		if (this.latexLeaf) {
+			app.workspace.setActiveLeaf(this.latexLeaf);
+			return;
+		}
+
+		this.latexLeaf = this.app.workspace.getRightLeaf(false);
+		this.app.workspace.revealLeaf(this.latexLeaf)
+		this.latexLeaf.setViewState({
+			type: LatexContextView.TYPE,
+			active: true
+		});
+	}
 }
 
 
 
-class SampleSettingTab extends PluginSettingTab {
+class OSC_SettingTab extends PluginSettingTab {
 	plugin: OSC_Plugin;
 
 	constructor(app: App, plugin: OSC_Plugin) {
