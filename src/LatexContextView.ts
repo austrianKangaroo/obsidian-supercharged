@@ -6,7 +6,7 @@ export default class LatexContextView extends ItemView {
 	plugin: OSC_Plugin;
     static TYPE = 'latex-context-view';
 
-	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
+	// adapted from https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 
 	constructor(plugin: OSC_Plugin, leaf: WorkspaceLeaf) {
 		super(leaf);
@@ -23,6 +23,7 @@ export default class LatexContextView extends ItemView {
 	}
 
 	async onload(): Promise<void> {
+		// the mathjax library gets loaded by obsidian only on demand
 		await loadMathJax();
 
 		if (!this.plugin.activeEditor) {
@@ -39,8 +40,9 @@ export default class LatexContextView extends ItemView {
 
 		const rootEl = container.createDiv({ cls: 'supercharged-table' });
 
+		// prepend custom command groups to the predefined commands
 		const commandGroups = [{
-			name: 'custom commands',
+			name: 'Custom Commands',
 			commands: this.plugin.settings.custom_commands
 		}].concat(COMMAND_GROUPS);
 
@@ -56,10 +58,12 @@ export default class LatexContextView extends ItemView {
 				});
 			})
 		});
+		// implement 'collapsible' dropdown for command groups
 		collapse();
 		await finishRenderMath();
 	}
 
+	// gets called whenever the user closes the leaf or detach() is executed on the leaf, for example on plugin deactivation.
 	onunload(): void {
 		this.plugin.latexLeaf = null;
 	}

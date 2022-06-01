@@ -2,7 +2,7 @@ import OSC_Plugin from 'src/main';
 import { PluginSettingTab, App, Setting } from 'obsidian';
 
 
-export default class OSC_SettingTab extends PluginSettingTab {
+export class OSC_SettingTab extends PluginSettingTab {
 	plugin: OSC_Plugin;
 
 	constructor(app: App, plugin: OSC_Plugin) {
@@ -28,4 +28,19 @@ export default class OSC_SettingTab extends PluginSettingTab {
 					}));
 		}
 	}
+}
+
+//gives the User the opportunity to choose their 5 latex codes for their interface
+export interface OSC_PluginSettings {
+	custom_commands: string[];
+}
+
+export const DEFAULT_SETTINGS: OSC_PluginSettings = {
+	custom_commands: [
+		'command',
+		'command',
+		'command',
+		'command',
+		'command'
+	]
 }
