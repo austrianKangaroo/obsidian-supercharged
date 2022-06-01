@@ -1,5 +1,5 @@
 import OSC_Plugin from 'src/main';
-import { PluginSettingTab, App, Setting } from 'obsidian';
+import { PluginSettingTab, App, Setting, setIcon } from 'obsidian';
 
 
 export class OSC_SettingTab extends PluginSettingTab {
@@ -33,7 +33,7 @@ export class OSC_SettingTab extends PluginSettingTab {
 						this.plugin.latexLeaf?.detach();
 					}))
 				.addButton(button => {
-					button.setButtonText('-');
+					setIcon(button.buttonEl, 'cross');
 					button.onClick(async () => {
 						/*
 						this gets executed when the user presses the '-' button on the setting
