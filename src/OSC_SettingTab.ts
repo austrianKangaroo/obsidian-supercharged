@@ -1,23 +1,27 @@
 import OSC_Plugin from 'src/main';
-import { PluginSettingTab, App, Setting } from 'obsidian';
+import { PluginSettingTab, App, Setting, TextComponent } from 'obsidian';
 
 
 export class OSC_SettingTab extends PluginSettingTab {
-	plugin: OSC_Plugin;
+	plugin : OSC_Plugin;
 
 	constructor(app: App, plugin: OSC_Plugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
 
-	display(): void {
+	display() : void {
+		this.reload();
+	}
+
+	reload(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		containerEl.createEl('h2', { text: 'Define your own latex commands' });
 
 		for (let i = 0; i < this.plugin.settings.custom_commands.length; i++) {
 			new Setting(containerEl)
-				.setName('Command_' + i)
+				.setName('Command ' + i)
 				.addText(text => text
 					.setPlaceholder('command')
 					.setValue(this.plugin.settings.custom_commands[i])
@@ -25,8 +29,26 @@ export class OSC_SettingTab extends PluginSettingTab {
 						this.plugin.settings.custom_commands[i] = value;
 						await this.plugin.saveSettings();
 						this.plugin.latexLeaf?.detach();
-					}));
+					}))
+				.addButton(button => {
+					button.setButtonText('-');
+					button.onClick(async () => {
+						this.plugin.settings.custom_commands.splice(i, 1);
+						await this.plugin.saveSettings();
+						this.plugin.latexLeaf?.detach();
+						this.reload(); // reload to prevent indexing wierdness
+					})
+				});
 		}
+
+		const addCommandButton = containerEl.createEl('button');
+		addCommandButton.textContent = '+';
+		addCommandButton.onClickEvent(async () => {
+			this.plugin.settings.custom_commands.push('');
+			await this.plugin.saveSettings();
+			this.plugin.latexLeaf?.detach();
+			this.reload();
+		})
 	}
 }
 
