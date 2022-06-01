@@ -1,15 +1,15 @@
-import { App, Editor, finishRenderMath, ItemView, loadMathJax, MarkdownView, Notice, Plugin, PluginSettingTab, renderMath, Setting, WorkspaceLeaf } from 'obsidian';
-import { CanvasContextViewType, CanvasView } from 'canvas';
+import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
+import CanvasView from 'CanvasView';
 import LatexContextView from 'LatexContextView';
 
 // Remember to rename these classes and interfaces!
 
 //gives the User the opportunity to choose their 5 latex codes for their interface
-interface MyPluginSettings {
+interface OSC_PluginSettings {
 	custom_commands: string[];
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: OSC_PluginSettings = {
 	custom_commands: [
 		'command',
 		'command',
@@ -20,8 +20,8 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 }
 
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class OSC_Plugin extends Plugin {
+	settings: OSC_PluginSettings;
 
 	latexLeaf: WorkspaceLeaf;
 	activeEditor: Editor;
@@ -31,7 +31,7 @@ export default class MyPlugin extends Plugin {
 	async onload() { // this funtion gets executed once the plugin gets activated
 		await this.loadSettings();
 
-		this.registerView(LatexContextView.LatexContextViewType, leaf => new LatexContextView(this, leaf));
+		this.registerView(LatexContextView.TYPE, leaf => new LatexContextView(this, leaf));
 
 		this.addCommand({
 			id: 'open-latex-leaf',
@@ -47,7 +47,7 @@ export default class MyPlugin extends Plugin {
 				this.latexLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.latexLeaf)
 				this.latexLeaf.setViewState({
-					type: LatexContextView.LatexContextViewType,
+					type: LatexContextView.TYPE,
 					active: true
 				});
 			},
@@ -61,7 +61,7 @@ export default class MyPlugin extends Plugin {
 			]
 		});
 
-		this.registerView(CanvasContextViewType, leaf => new CanvasView(this, leaf));
+		this.registerView(CanvasView.TYPE, leaf => new CanvasView(this, leaf));
 		this.addCommand({
 			id: 'open-supercharged-canvas',
 			name: 'Open Canvas',
@@ -76,7 +76,7 @@ export default class MyPlugin extends Plugin {
 				this.canvasLeaf = this.app.workspace.getRightLeaf(false);
 				this.app.workspace.revealLeaf(this.canvasLeaf);
 				this.canvasLeaf.setViewState({
-					type : CanvasContextViewType,
+					type : CanvasView.TYPE,
 					active : true
 				});
 			},
@@ -120,9 +120,9 @@ export default class MyPlugin extends Plugin {
 
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: OSC_Plugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: OSC_Plugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}

@@ -1,14 +1,14 @@
 import { ItemView, WorkspaceLeaf, loadMathJax, finishRenderMath, renderMath } from 'obsidian';
-import MyPlugin from 'main';
+import OSC_Plugin from 'main';
 import { COMMAND_GROUPS } from 'latexCommands';
 
 export default class LatexContextView extends ItemView {
-	plugin: MyPlugin;
-    static LatexContextViewType = 'latex-context-view';
+	plugin: OSC_Plugin;
+    static TYPE = 'latex-context-view';
 
 	// see https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 
-	constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
+	constructor(plugin: OSC_Plugin, leaf: WorkspaceLeaf) {
 		super(leaf);
 		this.plugin = plugin;
 	}
@@ -19,7 +19,7 @@ export default class LatexContextView extends ItemView {
 	}
 
 	getViewType(): string {
-		return LatexContextView.LatexContextViewType;
+		return LatexContextView.TYPE;
 	}
 
 	async onload(): Promise<void> {

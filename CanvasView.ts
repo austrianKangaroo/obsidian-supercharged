@@ -1,10 +1,10 @@
-import MyPlugin from 'main';
+import OSC_Plugin from 'main';
 import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
 
-export const CanvasContextViewType = 'canvas-context-view';
+export default class CanvasView extends ItemView {
+    plugin : OSC_Plugin;
 
-export class CanvasView extends ItemView {
-    plugin : MyPlugin;
+    static TYPE = 'canvas-context-view';
 
     private painting : boolean = false;
 
@@ -13,7 +13,7 @@ export class CanvasView extends ItemView {
     private strokeColor = '#000000';
     private strokeWidth = 10;
 
-    constructor(plugin: MyPlugin, leaf: WorkspaceLeaf) {
+    constructor(plugin: OSC_Plugin, leaf: WorkspaceLeaf) {
 		super(leaf);
 		this.plugin = plugin;
 	}
@@ -23,7 +23,7 @@ export class CanvasView extends ItemView {
 	}
 
     getViewType(): string {
-		return CanvasContextViewType;
+		return CanvasView.TYPE;
 	}
 
     onunload(): void {
