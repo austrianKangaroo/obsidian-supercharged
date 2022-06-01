@@ -62,7 +62,6 @@ export default class LatexContextView extends ItemView {
 
 	onunload(): void {
 		this.plugin.latexLeaf = null;
-		this.plugin.canvasLeaf = null;
 	}
 }
 

@@ -10,7 +10,7 @@ export default class CanvasView extends ItemView {
 
     private canvas : HTMLCanvasElement;
 
-    private strokeColor = '#000000';
+    private strokeColor = '#FF0000';
     private strokeWidth = 10;
 
     constructor(plugin: OSC_Plugin, leaf: WorkspaceLeaf) {
@@ -31,15 +31,23 @@ export default class CanvasView extends ItemView {
 	}
 
     onload(): void {
-		if (!this.plugin.activeEditor) {
-			/*
+		/*
+        if (!this.plugin.activeEditor) {
+			
 			this branch gets executed if the app gets closed and reopened
 			in this case, we want to close the leaf as we have no access to an editor.
 			this means that our button callbacks can't know where to insert text
-			*/
+			
 			this.leaf.detach();
 			return;
 		}
+        */
+
+        /* 
+        Note that this function may be called before the spawnCanvasView function form main got called.
+        This happens if the user closes the app before closing the canvas leaf.
+        */
+        
 
 		const container = this.contentEl;
 
@@ -72,6 +80,7 @@ export default class CanvasView extends ItemView {
         const COLOR_PICKER_ID = 'color-picker';
         colorInput.id = COLOR_PICKER_ID;
         colorInput.addEventListener('change', event => { this.strokeColor = colorInput.value; });
+        colorInput.value = this.strokeColor;
         
         colorPickerLabel.setAttribute('for', COLOR_PICKER_ID);
         colorPickerLabel.textContent = 'Color';
@@ -81,6 +90,7 @@ export default class CanvasView extends ItemView {
         const sliderInput = strokeWidthSlider.createEl('input', { type : 'range' });
         sliderInput.setAttribute('min', '5');
         sliderInput.setAttribute('max', '25');
+        sliderInput.value = this.strokeWidth + '';
         const SLIDER_INPUT_ID = 'slider-input';
         sliderInput.id = SLIDER_INPUT_ID;
         sliderInput.oninput = () => { this.strokeWidth = parseInt(sliderInput.value); }
@@ -105,10 +115,15 @@ export default class CanvasView extends ItemView {
             this.draw(event, ctx);
         });
 
-        this.canvas.on('mouseup', '.supercharged-canvas', (event, _target) => {
+        this.canvas.on('mouseup', '.supercharged-canvas', (_event, _target) => {
             this.painting = false;
             ctx.beginPath();
         });
+
+        this.canvas.on('mouseout', '.supercharged-canvas', (_event, _target) => {
+            this.painting = false;
+            ctx.beginPath();
+        })
 
         this.canvas.on('mousemove', '.supercharged-canvas', (event, _target) => { this.draw(event, ctx); });
 	}
