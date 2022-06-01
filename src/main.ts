@@ -1,6 +1,7 @@
 import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
 import CanvasView from 'src/CanvasView';
 import LatexContextView from 'src/LatexContextView';
+import OSC_SettingTab from 'src/OSC_SettingTab';
 
 //gives the User the opportunity to choose their 5 latex codes for their interface
 interface OSC_PluginSettings {
@@ -74,7 +75,7 @@ export default class OSC_Plugin extends Plugin {
 	}
 
 
-	async loadSettings() {
+	private async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
@@ -118,35 +119,5 @@ export default class OSC_Plugin extends Plugin {
 			type: LatexContextView.TYPE,
 			active: true
 		});
-	}
-}
-
-
-
-class OSC_SettingTab extends PluginSettingTab {
-	plugin: OSC_Plugin;
-
-	constructor(app: App, plugin: OSC_Plugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-		containerEl.empty();
-		containerEl.createEl('h2', { text: 'Define your own latex commands' });
-
-		for (let i = 0; i < this.plugin.settings.custom_commands.length; i++) {
-			new Setting(containerEl)
-				.setName('Command_' + i)
-				.addText(text => text
-					.setPlaceholder('command')
-					.setValue(this.plugin.settings.custom_commands[i])
-					.onChange(async (value) => {
-						this.plugin.settings.custom_commands[i] = value;
-						await this.plugin.saveSettings();
-						this.plugin.latexLeaf?.detach();
-					}));
-		}
 	}
 }
