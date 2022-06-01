@@ -1,4 +1,4 @@
-import OSC_Plugin from 'main';
+import OSC_Plugin from 'src/main';
 import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
 
 export default class CanvasView extends ItemView {

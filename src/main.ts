@@ -1,6 +1,6 @@
-import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
-import CanvasView from 'CanvasView';
-import LatexContextView from 'LatexContextView';
+import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
+import CanvasView from 'src/CanvasView';
+import LatexContextView from 'src/LatexContextView';
 
 // Remember to rename these classes and interfaces!
 

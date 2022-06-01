@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf, loadMathJax, finishRenderMath, renderMath } from 'obsidian';
-import OSC_Plugin from 'main';
-import { COMMAND_GROUPS } from 'latexCommands';
+import OSC_Plugin from 'src/main';
+import { COMMAND_GROUPS } from 'src/latexCommands';
 
 export default class LatexContextView extends ItemView {
 	plugin: OSC_Plugin;
