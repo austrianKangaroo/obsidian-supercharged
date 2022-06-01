@@ -10,7 +10,7 @@ export default class OSC_Plugin extends Plugin {
 	settings: OSC_PluginSettings;
 
 	latexLeaf: WorkspaceLeaf;
-	canvasLeaf : WorkspaceLeaf;
+	canvasLeaf: WorkspaceLeaf;
 
 	activeEditor: Editor;
 
@@ -47,13 +47,13 @@ export default class OSC_Plugin extends Plugin {
 		this.addCommand({
 			id: 'open-supercharged-canvas',
 			name: 'Open Canvas',
-			editorCallback: (_editor : Editor, _view : MarkdownView) => {
+			editorCallback: (_editor: Editor, _view: MarkdownView) => {
 				this.spawnCanvasView();
 			},
-			hotkeys : [
+			hotkeys: [
 				{
-					key : 'j',
-					modifiers : [
+					key: 'j',
+					modifiers: [
 						'Ctrl'
 					]
 				}
@@ -83,16 +83,16 @@ export default class OSC_Plugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	insertText(editor : Editor, text : string) : void {
+	insertText(editor: Editor, text: string): void {
 		const line = editor.getCursor().line;
 		const ch = editor.getCursor().ch;
-	
+
 		editor.replaceRange(text, editor.getCursor());
 		editor.setCursor({ line: line, ch: ch + text.length });
 	}
 
-	private spawnCanvasView() : void {
-		if(this.canvasLeaf) {
+	private spawnCanvasView(): void {
+		if (this.canvasLeaf) {
 			this.app.workspace.setActiveLeaf(this.canvasLeaf);
 			return;
 		}
@@ -100,12 +100,12 @@ export default class OSC_Plugin extends Plugin {
 		this.canvasLeaf = this.app.workspace.getRightLeaf(false);
 		this.app.workspace.revealLeaf(this.canvasLeaf);
 		this.canvasLeaf.setViewState({
-			type : CanvasView.TYPE,
-			active : true
+			type: CanvasView.TYPE,
+			active: true
 		});
 	}
 
-	private spawnLatexView(editor : Editor) : void {
+	private spawnLatexView(editor: Editor): void {
 		this.activeEditor = editor;
 
 		if (this.latexLeaf) {

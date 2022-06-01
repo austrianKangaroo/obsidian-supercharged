@@ -13,15 +13,15 @@
 
 .supercharged-table button {
     font-size: large;
-    padding:1em;
-    margin:0.25em;
+    padding: 1em;
+    margin: 0.25em;
 }
 
-.supercharged-table mjx-container.MathJax{
-    margin:0px;
+.supercharged-table mjx-container.MathJax {
+    margin: 0px;
 }
 
-.supercharged-table .content{
+.supercharged-table .content {
     display: flex;
     align-items: stretch;
     flex-direction: row;
@@ -29,8 +29,11 @@
     flex-wrap: wrap;
 }
 
-.supercharged-table button:hover /*, .supercharged-table button:focus*/ {
-    filter:invert(100%);
+.supercharged-table button:hover
+
+/*, .supercharged-table button:focus*/
+    {
+    filter: invert(100%);
     transform: scale(1.15);
     transition: all ease 0.25s;
 }
@@ -39,10 +42,10 @@
     width: 100%;
     font-size: 1em;
     margin-bottom: 0;
-    cursor:pointer;
+    cursor: pointer;
 }
 
-.content{
+.content {
     padding: 0 18px;
     max-height: 1000px;
     overflow: hidden;
@@ -52,10 +55,12 @@
 .collapsible:after {
     font-size: 13px;
     margin-left: 5px;
-    content: "\2796"; /* Unicode character for "minus" sign (-) */
-  
+    content: "\2796";
+    /* Unicode character for "minus" sign (-) */
+
 }
-  
+
 .active:after {
-    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    content: '\02795';
+    /* Unicode character for "plus" sign (+) */
 }

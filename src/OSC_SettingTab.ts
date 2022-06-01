@@ -3,7 +3,7 @@ import { PluginSettingTab, App, Setting } from 'obsidian';
 
 
 export class OSC_SettingTab extends PluginSettingTab {
-	plugin : OSC_Plugin;
+	plugin: OSC_Plugin;
 
 	constructor(app: App, plugin: OSC_Plugin) {
 		super(app, plugin);
@@ -11,7 +11,7 @@ export class OSC_SettingTab extends PluginSettingTab {
 	}
 
 	// display() gets called every time the tab is selected within the settings menu
-	display() : void {
+	display(): void {
 		this.reload();
 	}
 
@@ -51,7 +51,7 @@ export class OSC_SettingTab extends PluginSettingTab {
 						This is necessary because otherwise it would have to reload with the new custom commands
 						every time one is deleted
 						*/
-						this.plugin.latexLeaf?.detach(); 
+						this.plugin.latexLeaf?.detach();
 						this.reload();
 					})
 				});
@@ -62,7 +62,7 @@ export class OSC_SettingTab extends PluginSettingTab {
 		addCommandButton.textContent = '+';
 		addCommandButton.onClickEvent(async () => {
 			// we add a new command by appending the empty string and reloading.
-			this.plugin.settings.custom_commands.push(''); 
+			this.plugin.settings.custom_commands.push('');
 			await this.plugin.saveSettings();
 			this.plugin.latexLeaf?.detach();
 			this.reload();

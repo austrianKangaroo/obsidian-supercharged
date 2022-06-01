@@ -4,7 +4,7 @@ import { COMMAND_GROUPS } from 'src/latexCommands';
 
 export default class LatexContextView extends ItemView {
 	plugin: OSC_Plugin;
-    static TYPE = 'latex-context-view'; // view type required for calling registerViewType() in main
+	static TYPE = 'latex-context-view'; // view type required for calling registerViewType() in main
 
 	// adapted from https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 
@@ -47,10 +47,10 @@ export default class LatexContextView extends ItemView {
 		}].concat(COMMAND_GROUPS);
 
 		commandGroups.forEach((group, i) => {
-			const groupDiv= rootEl.createDiv();
-			const header = groupDiv.createEl('h2',{cls:'collapsible'});
+			const groupDiv = rootEl.createDiv();
+			const header = groupDiv.createEl('h2', { cls: 'collapsible' });
 			header.textContent = group.name;
-			const content = groupDiv.createDiv({cls:'content'});
+			const content = groupDiv.createDiv({ cls: 'content' });
 			group.commands.forEach((command, index) => {
 				drawButton(command, content, () => {
 					this.plugin.insertText(this.plugin.activeEditor, command);
@@ -79,17 +79,17 @@ function drawButton(latexCommand: string, parent: HTMLElement, callback: () => a
 function collapse() {
 	var coll = document.getElementsByClassName("collapsible");
 	var i;
-	
+
 	for (i = 0; i < coll.length; i++) {
-	  coll[i].addEventListener("click", function() {
-		this.classList.toggle("active");
-		var content = this.nextElementSibling;
-		if (content.style.maxHeight){
-			content.style.maxHeight = null;
-		} else {
-			content.style.maxHeight = 0 + "px";
-		//	content.style.maxHeight = content.scrollHeight + "px";
-		}
-	  });
+		coll[i].addEventListener("click", function () {
+			this.classList.toggle("active");
+			var content = this.nextElementSibling;
+			if (content.style.maxHeight) {
+				content.style.maxHeight = null;
+			} else {
+				content.style.maxHeight = 0 + "px";
+				//	content.style.maxHeight = content.scrollHeight + "px";
+			}
+		});
 	}
 }

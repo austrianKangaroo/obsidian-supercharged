@@ -72,6 +72,7 @@ const SET_SYMBOLS: LatexCommandGroup = {
         '\\supseteq',
         '\\supset',
         '\\cup',
+        '\\uplus',
         '\\cap',
         '\\times',
         '\\setminus',
@@ -79,8 +80,7 @@ const SET_SYMBOLS: LatexCommandGroup = {
         '\\bigcup_{i \\in I} A_i',
         '\\bigcap_{i \\in I} A_i',
         '\\mathcal{S}',
-        'f : A \\rightarrow B',
-        '\\uplus'
+        'f : A \\rightarrow B, x \\mapsto f(x)'
     ]
 }
 
@@ -184,7 +184,8 @@ const ARITHMETIC_OPERATORS: LatexCommandGroup = {
         '*',
         '\\cdot',
         '\\div',
-        '\\frac{a}{b}'
+        '\\frac{a}{b}',
+        'a^{b}'
     ]
 }
 
