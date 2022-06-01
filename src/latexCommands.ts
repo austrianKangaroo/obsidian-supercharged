@@ -189,6 +189,18 @@ const ARITHMETIC_OPERATORS: LatexCommandGroup = {
     ]
 }
 
+const DECORATORS : LatexCommandGroup = {
+    name: 'Decorators',
+    commands: [
+        '\\hat{x}',
+        '\\underline{x}',
+        '\\overline{x}',
+        '\\overrightarrow{AB}',
+        '\\vec{x}',
+        '\\tilde{x}'
+    ]
+}
+
 
 export const COMMAND_GROUPS: LatexCommandGroup[] = [
     ARITHMETIC_OPERATORS,
@@ -197,6 +209,7 @@ export const COMMAND_GROUPS: LatexCommandGroup[] = [
     RELATIONS,
     SET_SYMBOLS,
     LOGIC_SYMBOLS,
+    DECORATORS,
     GREEKS_LOWERCASE,
     GREEKS_UPERCASE
 ]
