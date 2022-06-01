@@ -143,7 +143,7 @@ export default class CanvasView extends ItemView {
         ctx.lineWidth = this.strokeWidth;
         ctx.lineCap = "round";
         
-        ctx.strokeStyle = /*this.erase ? TRANSPARENT : */this.strokeColor;
+        ctx.strokeStyle = this.strokeColor;
 
 
         ctx.lineTo(event.offsetX, event.offsetY);

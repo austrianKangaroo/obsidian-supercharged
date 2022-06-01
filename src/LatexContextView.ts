@@ -4,7 +4,7 @@ import { COMMAND_GROUPS } from 'src/latexCommands';
 
 export default class LatexContextView extends ItemView {
 	plugin: OSC_Plugin;
-    static TYPE = 'latex-context-view';
+    static TYPE = 'latex-context-view'; // view type required for calling registerViewType() in main
 
 	// adapted from https://github.com/tgrosinger/advanced-tables-obsidian/blob/28a0a65f71d72666a5d0c422b5ed342bbd144b8c/src/table-controls-view.ts
 

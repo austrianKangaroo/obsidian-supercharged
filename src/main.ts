@@ -60,7 +60,7 @@ export default class OSC_Plugin extends Plugin {
 			]
 		})
 
-		//This adds a tab to the settings menu so the user can configure various aspects of the plugin
+		// This adds a tab to the settings menu so the user can configure various aspects of the plugin
 		this.addSettingTab(new OSC_SettingTab(this.app, this));
 	}
 

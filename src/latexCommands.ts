@@ -177,28 +177,25 @@ const CALCULUS: LatexCommandGroup = {
     ]
 }
 
-const MATH_OPERATORS: LatexCommandGroup = {
-    name: 'math operators',
+const ARITHMETIC_OPERATORS: LatexCommandGroup = {
+    name: 'Arithmetic',
     commands: [
         '+',
         '*',
         '\\cdot',
         '\\div',
-        '\\frac{a}{b}',
-        '\\oplus',
-        '\\sum_{i=1}^n a_i',
-        '\\int_a^b f(x)dx',
+        '\\frac{a}{b}'
     ]
 }
 
 
 export const COMMAND_GROUPS: LatexCommandGroup[] = [
-    GREEKS_LOWERCASE,
-    GREEKS_UPERCASE,
-    MATH_OPERATORS,
+    ARITHMETIC_OPERATORS,
+    LINEAR_ALGEBRA,
+    CALCULUS,
     RELATIONS,
     SET_SYMBOLS,
     LOGIC_SYMBOLS,
-    LINEAR_ALGEBRA,
-    CALCULUS
+    GREEKS_LOWERCASE,
+    GREEKS_UPERCASE
 ]
