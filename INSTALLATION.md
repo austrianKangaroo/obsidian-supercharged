@@ -13,7 +13,7 @@ Go to the settings clicking the button `Settings` on the left sidebar or pressin
 At the top of the settings tab, you should see a toggle switch with the title `Safe mode`. Disable safe mode.
 
 ## 5 Open plugins folder
-On the right hand side of the section `Installed plugins`, you should see a folder icon with the tooltip `Open plugins folder`. Click this icon to open the plugins folder. Alternatively, go to your vault folder. The folder should contain a hidden subfolder called `.obsidian`. Open this folder and open the subfolder `plugins`. If there is no `plugins` folder create a new folder `plugins`.
+On the right hand side of the section `Installed plugins`, you should see a folder icon with the tooltip `Open plugins folder`. Click this icon to open the plugins folder. Alternatively, go to your vault folder. The folder should contain a hidden subfolder called `.obsidian`. Open this folder and open the subfolder `plugins`. If there is no `plugins` folder create a new folder `plugins`. Restart obsidian.
 
 ## 6 Add plugin
 Copy the folder `obsidian-supercharged-main` provided in the submission into the plugins folder. You should see the plugin appear in the plugin settings. Click the toggle switch to activate the plugin.
