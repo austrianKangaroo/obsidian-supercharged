@@ -18,7 +18,7 @@
 }
 
 .supercharged-table mjx-container.MathJax {
-    margin: 0px;
+    margin: 0px!important;
 }
 
 .supercharged-table .content {
