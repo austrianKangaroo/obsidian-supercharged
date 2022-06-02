@@ -3,8 +3,7 @@
 	"name": "Obsidian Supercharged",
 	"version": "1.0.1",
 	"minAppVersion": "0.12.0",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
+	"description": "This plugin aims to help with remembering and inserting specific latex commands. It also offers a feature to sketch simple drawing and insert them into your files",
+	"author": "Simon G., Andreas S., Andrea Z., Alexander P., Stefan G.",
 	"isDesktopOnly": false
 }
